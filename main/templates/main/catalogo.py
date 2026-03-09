@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Catalogo Sfide - RootlessCTF{% endblock %}
+
+{% block content %}
+
+<h1>Catalogo Sfide</h1>
+
+{% for sfida in sfide %}
+    <div>
+        <h2>{{ sfida.titolo }}</h2>
+        <p>Categoria: {{ sfida.categoria.nome }}</p>
+        <p>Difficoltà: {{ sfida.l_difficolta }}</p>
+        <p>Punteggio massimo: {{ sfida.p_massimo }}</p>
+        <a href="{% url 'sfida_detail' sfida.id %}">Vai alla sfida</a>
+    </div>
+{% empty %}
+    <p>Nessuna sfida disponibile.</p>
+{% endfor %}
+
+{% endblock %}

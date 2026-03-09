@@ -1,0 +1,31 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ sfida.titolo }} - RootlessCTF{% endblock %}
+
+{% block content %}
+
+<h1>{{ sfida.titolo }}</h1>
+<p>Categoria: {{ sfida.categoria.nome }}</p>
+<p>Difficoltà: {{ sfida.l_difficolta }}</p>
+<p>Punteggio massimo: {{ sfida.p_massimo }}</p>
+
+<hr>
+
+<p>{{ sfida.descrizione }}</p>
+
+<hr>
+
+<h2>Consegna le flag</h2>
+
+{% for flag in flags %}
+    <div>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="flag_id" value="{{ flag.id }}">
+            <input type="text" name="flag_input" placeholder="KEY{...}">
+            <button type="submit">Consegna</button>
+        </form>
+    </div>
+{% endfor %}
+
+{% endblock %}

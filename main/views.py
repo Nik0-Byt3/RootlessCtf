@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from .forms import RegistrazioneForm, LoginForm
 from django.contrib.auth.decorators import login_required
+from .models import Utente, Sfida, Flag, Categoria, Indizio, Partecipa
 
 def home(request):
     return render(request, 'main/home.html')
@@ -36,3 +37,14 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     return render(request, 'main/dashboard.html', {'utente': request.user})
+
+@login_required
+def catalogo(request):
+    sfide = Sfida.objects.all()
+    return render(request, 'main/catalogo.html', {'sfide': sfide})
+
+@login_required
+def sfida_detail(request, id):
+    sfida = Sfida.objects.get(id=id)
+    flags = Flag.objects.filter(sfida=sfida)
+    return render(request, 'main/sfida_detail.html', {'sfida': sfida, 'flags': flags})
