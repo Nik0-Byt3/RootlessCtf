@@ -1,0 +1,12 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Dashboard - RootlessCTF{% endblock %}
+
+{% block content %}
+
+<h1>Ciao, {{ utente.username }}!</h1>
+<p>Email: {{ utente.email }}</p>
+<p>Punteggio: {{ utente.punteggio }}</p>
+<p>Livello: {{ utente.livello }}</p>
+
+{% endblock %}

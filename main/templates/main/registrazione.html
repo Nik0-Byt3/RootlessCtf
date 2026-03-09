@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Registrazione - RootlessCTF{% endblock %}
+
+{% block content %}
+
+<h1>Registrati</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Registrati</button>
+</form>
+
+<p>Hai già un account? <a href="{% url 'login' %}">Accedi</a></p>
+
+{% endblock %}

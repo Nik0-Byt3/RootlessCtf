@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Home - RootlessCTF{% endblock %}
+
+{% block content %}
+
+<section>
+    <h1>Benvenuto su RootlessCTF</h1>
+    <p>La piattaforma di Capture The Flag dedicata a tutti, dai principianti agli esperti di cybersecurity.</p>
+</section>
+
+<section>
+    <h2>Cosa offriamo</h2>
+    <p>Sfide pratiche nelle categorie Web, Cryptography e Forensics per imparare e testare le tue competenze.</p>
+</section>
+
+<section>
+    <h2>Inizia ora</h2>
+    <a href="{% url 'registrazione' %}">Registrati</a>
+    <a href="{% url 'login' %}">Accedi</a>
+</section>
+
+{% endblock %}
