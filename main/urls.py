@@ -9,4 +9,6 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('catalogo/', views.catalogo, name='catalogo'),
     path('sfida/<int:id>/', views.sfida_detail, name='sfida_detail'),
+    path('profilo/', views.profilo, name='profilo'),
+    path('cambio-password/', views.cambio_password, name='cambio_password'),
 ]

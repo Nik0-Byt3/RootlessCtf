@@ -10,20 +10,35 @@
 <body>
 
     <nav>
-    <a href="{% url 'home' %}">RootlessCTF</a>
-    {% if user.is_authenticated %}
-        <span>{{ user.username }}</span>
-        <a href="{% url 'logout' %}">Logout</a>
-    {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'registrazione' %}">Registrati</a>
-    {% endif %}
-</nav>
+        <a href="{% url 'home' %}">RootlessCTF</a>
+        {% if user.is_authenticated %}
+            <span>{{ user.username }}</span>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'registrazione' %}">Registrati</a>
+        {% endif %}
+    </nav>
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    <div class="wrapper">
+
+        {% if user.is_authenticated %}
+        <aside class="sidebar">
+            <ul>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'catalogo' %}">Catalogo Sfide</a></li>
+                <li><a href="{% url 'profilo' %}">Area Utente</a></li>
+                <li><a href="{% url 'cambio_password' %}">Cambia Password</a></li>
+            </ul>
+        </aside>
+        {% endif %}
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+    </div>
 
 </body>
 </html>
