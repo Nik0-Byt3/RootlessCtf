@@ -6,7 +6,7 @@
 
 <h1>{{ sfida.titolo }}</h1>
 <p>Categoria: {{ sfida.categoria.nome }}</p>
-<p>Difficoltà: {{ sfida.l_difficolta }}</p>
+<p>Difficoltà: {{ sfida.difficolta }}</p>
 <p>Punteggio massimo: {{ sfida.p_massimo }}</p>
 
 <hr>
@@ -15,17 +15,99 @@
 
 <hr>
 
-<h2>Consegna le flag</h2>
+{% if sfida_completata %}
 
-{% for flag in flags %}
-    <div>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="flag_id" value="{{ flag.id }}">
-            <input type="text" name="flag_input" placeholder="KEY{...}">
-            <button type="submit">Consegna</button>
-        </form>
+    <p>✔ Sfida già completata!</p>
+
+{% elif sfida_appena_completata %}
+
+    <p>🎉 Congratulazioni! Hai completato la sfida!</p>
+    <p>Punti ottenuti: {{ partecipa_punteggio }}</p>
+
+{% else %}
+
+    <button onclick="document.getElementById('challenge-body').style.display='block'; this.style.display='none';">
+        Inizia la sfida
+    </button>
+
+    <div id="challenge-body" style="display:none;">
+
+        <h2>Istruzioni</h2>
+        <p>Trova la flag nel formato <strong>KEY{...}</strong> e inseriscila nel campo qui sotto.</p>
+
+        {% if sfida.categoria.nome == 'Web' %}
+            <p>Accedi alla sfida: <a href="/web/{{ sfida.id }}/" target="_blank">Apri pagina sfida</a></p>
+        {% elif sfida.categoria.nome == 'Cryptography' %}
+            <p>Accedi alla sfida: <a href="/crypto/{{ sfida.id }}/" target="_blank">Apri pagina sfida</a></p>
+        {% elif sfida.categoria.nome == 'Forensics' %}
+            <p>Accedi alla sfida: <a href="/forensics/{{ sfida.id }}/" target="_blank">Apri pagina sfida</a></p>
+        {% endif %}
+
+        <hr>
+
+        <h2>Consegna le flag</h2>
+
+        {% for flag in flags %}
+            <div>
+                <p>Flag #{{ forloop.counter }}</p>
+
+                {% if flag.id in flags_corrette %}
+                    <p>✔ Flag già consegnata correttamente.</p>
+                {% else %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="azione" value="consegna_flag">
+                        <input type="hidden" name="flag_id" value="{{ flag.id }}">
+                        <input type="hidden" name="sblocca_indizio_id" value="" id="hint-unlock-{{ flag.id }}">
+                        <input type="text" name="flag_input" placeholder="KEY{...}">
+                        <button type="submit">Consegna</button>
+
+                        {% if flag.indizio %}
+                            <button type="button" onclick="toggleHint('hint-{{ flag.id }}', {{ flag.id }})">💡 Indizio (-5 pt)</button>
+                        {% endif %}
+                    </form>
+
+                    {% if flag.id == flag_feedback_id %}
+                        {% if flag_ok %}
+                            <p>✔ Flag corretta!</p>
+                        {% else %}
+                            <p>✘ Flag errata. Riprova.</p>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if flag.indizio %}
+                        <div id="hint-{{ flag.id }}" style="display:{% if flag.id in indizi_sbloccati %}block{% else %}none{% endif %};">
+                            <p>Indizio: {{ flag.indizio.testo }}</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <br>
+        {% endfor %}
+
     </div>
-{% endfor %}
+
+    <script>
+        {% if challenge_started or flag_feedback_id or indizio_sbloccato %}
+            document.getElementById('challenge-body').style.display = 'block';
+            var startBtn = document.querySelector('button[onclick*="challenge-body"]');
+            if (startBtn) startBtn.style.display = 'none';
+        {% endif %}
+
+        function toggleHint(hintId, flagId) {
+            var box = document.getElementById(hintId);
+            if (box.style.display === 'none') {
+                if (confirm('Sbloccare questo indizio costerà 5 punti. Continuare?')) {
+                    box.style.display = 'block';
+                    document.getElementById('hint-unlock-' + flagId).value = flagId;
+                    document.getElementById('hint-unlock-' + flagId).form.submit();
+                }
+            } else {
+                box.style.display = 'none';
+            }
+        }
+    </script>
+
+{% endif %}
 
 {% endblock %}

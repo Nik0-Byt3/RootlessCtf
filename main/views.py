@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from .forms import RegistrazioneForm, LoginForm , ProfiloForm
 from django.contrib.auth.decorators import login_required
@@ -46,9 +46,63 @@ def catalogo(request):
 
 @login_required
 def sfida_detail(request, id):
-    sfida = Sfida.objects.get(id=id)
+    sfida = get_object_or_404(Sfida, id=id)
     flags = Flag.objects.filter(sfida=sfida)
-    return render(request, 'main/sfida_detail.html', {'sfida': sfida, 'flags': flags})
+    utente = request.user
+    partecipa, _ = Partecipa.objects.get_or_create(utente=utente, sfida=sfida)
+
+    flags_corrette = set(utente.flag.filter(sfida=sfida).values_list('id', flat=True))
+    indizi_sbloccati = set(partecipa.indizi_sbloccati.values_list('flag_id', flat=True))
+    flag_feedback_id = flag_ok = indizio_sbloccato = None
+    sfida_appena_completata = False  # dichiarato qui, sempre disponibile
+
+    if request.method == 'POST':
+        if partecipa.stato == 'non_iniziata':
+            partecipa.stato = 'incompleta'
+            partecipa.save()
+
+        flag = get_object_or_404(Flag, id=request.POST.get('flag_id'), sfida=sfida)
+
+        if request.POST.get('sblocca_indizio_id'):
+            indizio = Indizio.objects.filter(flag=flag).first()
+            if indizio and flag.id not in indizi_sbloccati:
+                partecipa.indizi_sbloccati.add(indizio)
+                partecipa.punteggio_ottenuto = max(0, partecipa.punteggio_ottenuto - 5)
+                partecipa.save()
+                indizi_sbloccati.add(flag.id)
+            indizio_sbloccato = True
+
+        else:
+            flag_input = request.POST.get('flag_input', '').strip()
+            flag_feedback_id = flag.id
+            if flag_input == flag.chiave and flag.id not in flags_corrette:
+                utente.flag.add(flag)
+                flags_corrette.add(flag.id)
+                flag_ok = True
+                if flags_corrette >= set(flags.values_list('id', flat=True)):
+                    sfida_appena_completata = True
+                    partecipa.stato = 'completata'
+                    partecipa.punteggio_ottenuto = max(0, sfida.p_massimo - partecipa.indizi_sbloccati.count() * 5)
+                    utente.punteggio += partecipa.punteggio_ottenuto
+                    utente.livello = 'esperto' if utente.punteggio >= 600 else 'intermedio' if utente.punteggio >= 350 else 'principiante'
+                    utente.save()
+                    partecipa.save()
+            else:
+                flag_ok = False
+
+    return render(request, 'main/sfida_detail.html', {
+        'sfida': sfida,
+        'flags': flags,
+        'flags_corrette': flags_corrette,
+        'indizi_sbloccati': indizi_sbloccati,
+        'flag_feedback_id': flag_feedback_id,
+        'flag_ok': flag_ok,
+        'challenge_started': partecipa.stato != 'non_iniziata',
+        'indizio_sbloccato': indizio_sbloccato,
+        'sfida_completata': partecipa.stato == 'completata' and not sfida_appena_completata,
+        'sfida_appena_completata': sfida_appena_completata,
+        'partecipa_punteggio': partecipa.punteggio_ottenuto,
+    })
 
 @login_required
 def profilo(request):
