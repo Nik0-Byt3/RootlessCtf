@@ -4,94 +4,165 @@
 
 {% block content %}
 
-<h1>{{ sfida.titolo }}</h1>
-<p>Categoria: {{ sfida.categoria.nome }}</p>
-<p>Difficoltà: {{ sfida.difficolta }}</p>
-<p>Punteggio massimo: {{ sfida.p_massimo }}</p>
+<div class="max-w-2xl mx-auto">
 
-<hr>
+    <!-- Header sfida -->
+    <div class="mb-6">
+        <div class="flex items-center gap-3 mb-2">
+            <span class="text-xs px-2 py-0.5 rounded-full border
+                {% if sfida.difficolta == 'facile' %} text-green-400 border-green-800 bg-green-900/30
+                {% elif sfida.difficolta == 'medio' %} text-yellow-400 border-yellow-800 bg-yellow-900/30
+                {% elif sfida.difficolta == 'difficile' %} text-red-400 border-red-800 bg-red-900/30
+                {% endif %}">
+                {{ sfida.difficolta|capfirst }}
+            </span>
+            <span class="text-xs text-zinc-500">{{ sfida.categoria.nome }}</span>
+            <span class="text-xs text-zinc-500">·</span>
+            <span class="text-xs text-zinc-500">{{ sfida.p_massimo }} pt</span>
+        </div>
+        <h1 class="text-2xl font-bold text-white">{{ sfida.titolo }}</h1>
+    </div>
 
-<p>{{ sfida.descrizione }}</p>
+    <!-- Immagine sfida -->
+    {% if sfida.immagine %}
+    <div class="mb-6">
+        <img src="{{ sfida.immagine.url }}" alt="{{ sfida.titolo }}"
+             class="w-full max-h-64 object-cover rounded-lg border border-zinc-800">
+    </div>
+    {% endif %}
 
-<hr>
+    <!-- Descrizione -->
+    <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-5 mb-6 text-sm text-zinc-400 leading-relaxed">
+        {{ sfida.descrizione }}
+    </div>
 
-{% if sfida_completata %}
+    <!-- SFIDA GIÀ COMPLETATA -->
+    {% if sfida_completata %}
+    <div class="flex items-center gap-3 px-5 py-4 rounded-lg bg-green-900/20 border border-green-800 text-green-400 text-sm">
+        <span class="text-lg">✔</span>
+        <span>Sfida già completata!</span>
+    </div>
 
-    <p>✔ Sfida già completata!</p>
+    <!-- APPENA COMPLETATA -->
+    {% elif sfida_appena_completata %}
+    <div class="px-5 py-4 rounded-lg bg-green-900/20 border border-green-800 text-sm">
+        <p class="text-green-400 font-bold text-base mb-1">🎉 Congratulazioni! Hai completato la sfida!</p>
+        <p class="text-green-300">Punti ottenuti: <strong>{{ partecipa_punteggio }}</strong></p>
+    </div>
 
-{% elif sfida_appena_completata %}
+    <!-- SFIDA IN CORSO -->
+    {% else %}
 
-    <p>🎉 Congratulazioni! Hai completato la sfida!</p>
-    <p>Punti ottenuti: {{ partecipa_punteggio }}</p>
+    <!-- Bottone avvia -->
+    <div id="start-btn-wrapper">
+        <button onclick="document.getElementById('challenge-body').style.display='block'; document.getElementById('start-btn-wrapper').style.display='none';"
+                class="w-full py-3 rounded-lg bg-white text-zinc-950 font-bold text-sm hover:bg-zinc-200 transition-colors">
+            Inizia la sfida
+        </button>
+    </div>
 
-{% else %}
-
-    <button onclick="document.getElementById('challenge-body').style.display='block'; this.style.display='none';">
-        Inizia la sfida
-    </button>
-
+    <!-- Corpo sfida -->
     <div id="challenge-body" style="display:none;">
 
-        <h2>Istruzioni</h2>
-        <p>Trova la flag nel formato <strong>KEY{...}</strong> e inseriscila nel campo qui sotto.</p>
-
+        <!-- Link alla pagina sfida -->
         {% if sfida.categoria.nome == 'Web' %}
-            <p>Accedi alla sfida: <a href="/web/{{ sfida.id }}/" target="_blank">Apri pagina sfida</a></p>
+        <div class="mb-6 px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-sm flex items-center justify-between">
+            <span class="text-zinc-400">Accedi all'ambiente di sfida</span>
+            <a href="/web/{{ sfida.id }}/" target="_blank"
+               class="text-white text-xs px-3 py-1.5 rounded border border-zinc-600 hover:border-white transition-colors">
+                Apri ↗
+            </a>
+        </div>
         {% elif sfida.categoria.nome == 'Cryptography' %}
-            <p>Accedi alla sfida: <a href="/crypto/{{ sfida.id }}/" target="_blank">Apri pagina sfida</a></p>
+        <div class="mb-6 px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-sm flex items-center justify-between">
+            <span class="text-zinc-400">Accedi all'ambiente di sfida</span>
+            <a href="/crypto/{{ sfida.id }}/" target="_blank"
+               class="text-white text-xs px-3 py-1.5 rounded border border-zinc-600 hover:border-white transition-colors">
+                Apri ↗
+            </a>
+        </div>
         {% elif sfida.categoria.nome == 'Forensics' %}
-            <p>Accedi alla sfida: <a href="/forensics/{{ sfida.id }}/" target="_blank">Apri pagina sfida</a></p>
+        <div class="mb-6 px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-sm flex items-center justify-between">
+            <span class="text-zinc-400">Accedi all'ambiente di sfida</span>
+            <a href="/forensics/{{ sfida.id }}/" target="_blank"
+               class="text-white text-xs px-3 py-1.5 rounded border border-zinc-600 hover:border-white transition-colors">
+                Apri ↗
+            </a>
+        </div>
         {% endif %}
 
-        <hr>
+        <!-- Istruzioni -->
+        <div class="mb-6 text-sm text-zinc-500">
+            Trova la flag nel formato <code class="text-zinc-300 bg-zinc-800 px-1.5 py-0.5 rounded text-xs">KEY{...}</code> e inseriscila nel campo corrispondente.
+        </div>
 
-        <h2>Consegna le flag</h2>
+        <!-- Flag -->
+        <div class="space-y-4">
+            {% for flag in flags %}
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
 
-        {% for flag in flags %}
-            <div>
-                <p>Flag #{{ forloop.counter }}</p>
+                <p class="text-xs text-zinc-500 mb-3">Flag #{{ forloop.counter }}</p>
 
                 {% if flag.id in flags_corrette %}
-                    <p>✔ Flag già consegnata correttamente.</p>
+                <!-- Flag già consegnata -->
+                <div class="flex items-center gap-2 text-green-400 text-sm">
+                    <span>✔</span>
+                    <span>Flag consegnata correttamente.</span>
+                </div>
+
                 {% else %}
-                    <form method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="azione" value="consegna_flag">
-                        <input type="hidden" name="flag_id" value="{{ flag.id }}">
-                        <input type="hidden" name="sblocca_indizio_id" value="" id="hint-unlock-{{ flag.id }}">
-                        <input type="text" name="flag_input" placeholder="KEY{...}">
-                        <button type="submit">Consegna</button>
+                <!-- Form consegna -->
+                <form method="POST" class="space-y-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="azione" value="consegna_flag">
+                    <input type="hidden" name="flag_id" value="{{ flag.id }}">
+                    <input type="hidden" name="sblocca_indizio_id" value="" id="hint-unlock-{{ flag.id }}">
 
-                        {% if flag.indizio %}
-                            <button type="button" onclick="toggleHint('hint-{{ flag.id }}', {{ flag.id }})">💡 Indizio (-5 pt)</button>
-                        {% endif %}
-                    </form>
-
-                    {% if flag.id == flag_feedback_id %}
-                        {% if flag_ok %}
-                            <p>✔ Flag corretta!</p>
-                        {% else %}
-                            <p>✘ Flag errata. Riprova.</p>
-                        {% endif %}
-                    {% endif %}
+                    <div class="flex gap-2">
+                        <input type="text" name="flag_input" placeholder="KEY{...}"
+                               class="flex-1 bg-zinc-950 border border-zinc-700 rounded px-3 py-2 text-sm text-zinc-300 font-mono outline-none focus:border-zinc-500 placeholder-zinc-600 transition-colors">
+                        <button type="submit"
+                                class="px-4 py-2 rounded bg-white text-zinc-950 font-bold text-xs hover:bg-zinc-200 transition-colors shrink-0">
+                            Consegna
+                        </button>
+                    </div>
 
                     {% if flag.indizio %}
-                        <div id="hint-{{ flag.id }}" style="display:{% if flag.id in indizi_sbloccati %}block{% else %}none{% endif %};">
-                            <p>Indizio: {{ flag.indizio.testo }}</p>
-                        </div>
+                    <button type="button" onclick="toggleHint('hint-{{ flag.id }}', {{ flag.id }})"
+                            class="text-xs text-zinc-500 hover:text-yellow-400 transition-colors">
+                        💡 Mostra indizio <span class="text-zinc-600">(-5 pt)</span>
+                    </button>
                     {% endif %}
+                </form>
+
+                <!-- Feedback -->
+                {% if flag.id == flag_feedback_id %}
+                <div class="mt-3 text-sm
+                    {% if flag_ok %} text-green-400{% else %} text-red-400{% endif %}">
+                    {% if flag_ok %}✔ Flag corretta!{% else %}✘ Flag errata. Riprova.{% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Indizio -->
+                {% if flag.indizio %}
+                <div id="hint-{{ flag.id }}"
+                     class="mt-3 px-3 py-2 rounded bg-yellow-900/20 border border-yellow-800/50 text-yellow-300 text-xs"
+                     style="display:{% if flag.id in indizi_sbloccati %}block{% else %}none{% endif %};">
+                    💡 {{ flag.indizio.testo }}
+                </div>
+                {% endif %}
+
                 {% endif %}
             </div>
-            <br>
-        {% endfor %}
+            {% endfor %}
+        </div>
 
     </div>
 
     <script>
         {% if challenge_started or flag_feedback_id or indizio_sbloccato %}
             document.getElementById('challenge-body').style.display = 'block';
-            var startBtn = document.querySelector('button[onclick*="challenge-body"]');
-            if (startBtn) startBtn.style.display = 'none';
+            document.getElementById('start-btn-wrapper').style.display = 'none';
         {% endif %}
 
         function toggleHint(hintId, flagId) {
@@ -108,6 +179,8 @@
         }
     </script>
 
-{% endif %}
+    {% endif %}
+
+</div>
 
 {% endblock %}

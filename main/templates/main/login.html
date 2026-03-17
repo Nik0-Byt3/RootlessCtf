@@ -2,20 +2,76 @@
 
 {% block title %}Login - RootlessCTF{% endblock %}
 
-{% block content %}
+{% block public_content %}
 
-<h1>Accedi</h1>
+<div class="flex-1 flex items-center justify-center px-4 pb-20">
+    <div class="w-full max-w-sm mt-20">
 
-{% if errore %}
-    <p style="color:red;">{{ errore }}</p>
-{% endif %}
+        <!-- Titolo -->
+        <div class="mb-8 text-center">
+            <h1 class="text-2xl font-bold text-white tracking-tight">Accedi</h1>
+            <p class="text-zinc-500 text-sm mt-1">Bentornato su RootlessCTF</p>
+        </div>
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Accedi</button>
-</form>
+        <!-- Errore -->
+        {% if errore %}
+        <div class="mb-4 px-4 py-3 rounded border border-red-800 bg-red-900/30 text-red-400 text-sm">
+            {{ errore }}
+        </div>
+        {% endif %}
 
-<p>Non hai un account? <a href="{% url 'registrazione' %}">Registrati</a></p>
+        <!-- Form -->
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-xs text-zinc-400 mb-1">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="text-red-400 text-xs mt-1">{{ field.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit"
+                    class="w-full mt-2 py-2 px-4 rounded bg-white text-zinc-950 font-bold text-sm hover:bg-zinc-200 transition-colors">
+                Accedi
+            </button>
+        </form>
+
+        <!-- Link registrazione -->
+        <p class="text-center text-zinc-500 text-sm mt-6">
+            Non hai un account?
+            <a href="{% url 'registrazione' %}" class="text-white hover:underline">Registrati</a>
+        </p>
+
+    </div>
+</div>
+
+<!-- Stile campi del form Django -->
+<style>
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        width: 100%;
+        background-color: #18181b;
+        border: 1px solid #3f3f46;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        color: #e4e4e7;
+        font-size: 0.875rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="email"]:focus {
+        border-color: #71717a;
+    }
+</style>
 
 {% endblock %}

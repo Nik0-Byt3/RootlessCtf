@@ -2,16 +2,94 @@
 
 {% block title %}Registrazione - RootlessCTF{% endblock %}
 
-{% block content %}
+{% block public_content %}
 
-<h1>Registrati</h1>
+<div class="flex-1 flex items-center justify-center px-4 pb-20">
+    <div class="w-full max-w-sm mt-20">
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Registrati</button>
-</form>
+        <!-- Titolo -->
+        <div class="mb-8 text-center">
+            <h1 class="text-2xl font-bold text-white tracking-tight">Registrati</h1>
+            <p class="text-zinc-500 text-sm mt-1">Crea il tuo account su RootlessCTF</p>
+        </div>
 
-<p>Hai già un account? <a href="{% url 'login' %}">Accedi</a></p>
+        <!-- Form -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-xs text-zinc-400 mb-1">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="text-red-400 text-xs mt-1">{{ field.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit"
+                    class="w-full mt-2 py-2 px-4 rounded bg-white text-zinc-950 font-bold text-sm hover:bg-zinc-200 transition-colors">
+                Registrati
+            </button>
+        </form>
+
+        <!-- Link login -->
+        <p class="text-center text-zinc-500 text-sm mt-6">
+            Hai già un account?
+            <a href="{% url 'login' %}" class="text-white hover:underline">Accedi</a>
+        </p>
+
+    </div>
+</div>
+
+<style>
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        width: 100%;
+        background-color: #18181b;
+        border: 1px solid #3f3f46;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        color: #e4e4e7;
+        font-size: 0.875rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="email"]:focus {
+        border-color: #71717a;
+    }
+    input[type="file"] {
+        width: 100%;
+        background-color: #18181b;
+        border: 1px solid #3f3f46;
+        border-radius: 0.375rem;
+        padding: 0.4rem 0.75rem;
+        color: #a1a1aa;
+        font-size: 0.875rem;
+        font-family: inherit;
+        cursor: pointer;
+    }
+    input[type="file"]::file-selector-button {
+        background-color: #3f3f46;
+        color: #e4e4e7;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-family: inherit;
+        cursor: pointer;
+        margin-right: 0.75rem;
+        transition: background-color 0.15s;
+    }
+    input[type="file"]::file-selector-button:hover {
+        background-color: #52525b;
+    }
+</style>
 
 {% endblock %}

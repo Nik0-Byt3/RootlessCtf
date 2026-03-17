@@ -1,44 +1,151 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}RootlessCTF{% endblock %}</title>
+
     {% load static %}
-    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand': '#00ff9d',
+                    },
+                    fontFamily: {
+                        'mono': ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
 </head>
-<body>
 
-    <nav>
-        <a href="{% url 'home' %}">RootlessCTF</a>
-        {% if user.is_authenticated %}
-            <span>{{ user.username }}</span>
-            <a href="{% url 'logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'registrazione' %}">Registrati</a>
-        {% endif %}
-    </nav>
+<body class="bg-zinc-950 text-zinc-300 font-mono h-full">
 
-    <div class="wrapper">
+    {% if user.is_authenticated %}
 
-        {% if user.is_authenticated %}
-        <aside class="sidebar">
-            <ul>
-                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                <li><a href="{% url 'catalogo' %}">Catalogo Sfide</a></li>
-                <li><a href="{% url 'profilo' %}">Area Utente</a></li>
-                <li><a href="{% url 'cambio_password' %}">Cambia Password</a></li>
-            </ul>
-        </aside>
-        {% endif %}
+        <!-- ── LAYOUT POST-LOGIN ── -->
+        <div class="flex h-screen overflow-hidden">
 
-        <main>
-            {% block content %}
-            {% endblock %}
-        </main>
+            <!-- SIDEBAR -->
+            <aside class="w-56 shrink-0 bg-zinc-900 border-r border-zinc-800 flex flex-col fixed h-full">
 
-    </div>
+                <!-- Brand -->
+                <div class="px-5 py-6 border-b border-zinc-800">
+                    <a href="{% url 'home' %}" class="text-white font-bold text-base tracking-widest uppercase">
+                        ⌗ RootlessCTF
+                    </a>
+                </div>
 
+                <!-- Nav links -->
+                <nav class="flex-1 px-3 py-4">
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{% url 'dashboard' %}"
+                               class="flex items-center gap-3 px-3 py-2 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors text-sm {% block nav_dashboard %}{% endblock %}">
+                                <span>◈</span> Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'catalogo' %}"
+                               class="flex items-center gap-3 px-3 py-2 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors text-sm {% block nav_catalogo %}{% endblock %}">
+                                <span>◉</span> Catalogo Sfide
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'profilo' %}"
+                               class="flex items-center gap-3 px-3 py-2 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors text-sm {% block nav_profilo %}{% endblock %}">
+                                <span>◎</span> Area Utente
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'cambio_password' %}"
+                               class="flex items-center gap-3 px-3 py-2 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors text-sm {% block nav_password %}{% endblock %}">
+                                <span>◌</span> Cambia Password
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- User + Logout -->
+                <div class="px-4 py-4 border-t border-zinc-800">
+                    <span class="block text-xs text-zinc-500 mb-2 truncate">{{ user.username }}</span>
+                    <a href="{% url 'logout' %}"
+                       class="block text-center text-xs px-3 py-2 rounded border border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-white transition-colors">
+                        Logout
+                    </a>
+                </div>
+
+            </aside>
+            <!-- /SIDEBAR -->
+
+            <!-- MAIN CONTENT -->
+            <main class="ml-56 flex-1 overflow-y-auto p-8">
+
+                <!-- Messaggi Django -->
+                {% if messages %}
+                <div class="mb-6 space-y-2">
+                    {% for message in messages %}
+                    <div class="px-4 py-3 rounded text-sm
+                        {% if message.tags == 'error' %} bg-red-900/40 text-red-300 border border-red-800
+                        {% elif message.tags == 'success' %} bg-green-900/40 text-green-300 border border-green-800
+                        {% else %} bg-zinc-800 text-zinc-300 border border-zinc-700
+                        {% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+
+            </main>
+            <!-- /MAIN CONTENT -->
+
+        </div>
+
+    {% else %}
+
+        <!-- ── LAYOUT PUBBLICO (home, login, registrazione) ── -->
+        <div class="min-h-screen flex flex-col">
+
+            <!-- Navbar pubblica -->
+            <nav class="border-b border-zinc-800 px-8 py-4 flex items-center justify-between">
+                <a href="{% url 'home' %}" class="text-white font-bold tracking-widest uppercase text-sm">
+                    ⌗ RootlessCTF
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'login' %}"
+                       class="text-sm text-zinc-400 hover:text-white transition-colors">
+                        Login
+                    </a>
+                    <a href="{% url 'registrazione' %}"
+                       class="text-sm px-4 py-2 rounded border border-zinc-600 text-zinc-300 hover:border-white hover:text-white transition-colors">
+                        Registrati
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Contenuto pagina pubblica -->
+            <main class="flex-1">
+                {% block public_content %}{% endblock %}
+            </main>
+
+        </div>
+
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
