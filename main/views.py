@@ -56,9 +56,9 @@ def profilo(request):
         form = ProfiloForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('profilo')
     else:
         form = ProfiloForm(instance=request.user)
+
     return render(request, 'main/profilo.html', {'form': form})
 
 @login_required

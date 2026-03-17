@@ -1,6 +1,33 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Dashboard - RootlessCTF{% endblock %}
+{% block title %}Profilo - RootlessCTF{% endblock %}
 
 {% block content %}
+
+<h1>Il tuo profilo</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div>
+        {% if user.foto_profilo %}
+            <img src="{{ user.foto_profilo.url }}" alt="Foto profilo">
+        {% else %}
+            <p>Nessuna foto profilo</p>
+        {% endif %}
+        {{ form.foto_profilo }}
+    </div>
+
+    <p><strong>Username:</strong> {{ user.username }}</p>
+
+    <label>Nome: {{ form.first_name }}</label>
+    <label>Cognome: {{ form.last_name }}</label>
+    <label>Email: {{ form.email }}</label>
+
+    <p><strong>Livello:</strong> {{ user.livello }}</p>
+    <p><strong>Punteggio:</strong> {{ user.punteggio }}</p>
+
+    <button type="submit">Salva modifiche</button>
+</form>
+
 {% endblock %}
