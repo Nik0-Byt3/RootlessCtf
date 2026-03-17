@@ -42,7 +42,33 @@ def dashboard(request):
 @login_required
 def catalogo(request):
     sfide = Sfida.objects.all()
-    return render(request, 'main/catalogo.html', {'sfide': sfide})
+    categorie = Categoria.objects.all()
+    utente = request.user
+
+    # Filtri
+    categoria = request.GET.get('categoria')
+    difficolta = request.GET.get('difficolta')
+    stato = request.GET.get('stato')
+
+    if categoria:
+        sfide = sfide.filter(categoria__id=categoria)
+    if difficolta:
+        sfide = sfide.filter(difficolta=difficolta)
+
+    # Annota ogni sfida con lo stato dell'utente
+    partecipazioni = Partecipa.objects.filter(utente=utente).values('sfida_id', 'stato')
+    stato_map = {p['sfida_id']: p['stato'] for p in partecipazioni}
+
+    risultati = []
+    for sfida in sfide:
+        sfida.stato_utente = stato_map.get(sfida.id, 'non_iniziata')
+        if not stato or sfida.stato_utente == stato:
+            risultati.append(sfida)
+
+    return render(request, 'main/catalogo.html', {
+        'sfide': risultati,
+        'categorie': categorie,
+    })
 
 @login_required
 def sfida_detail(request, id):

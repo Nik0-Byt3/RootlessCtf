@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Utente, Categoria, Sfida, Flag, Indizio, Partecipa
+from .models import Utente, Categoria, Sfida, Flag, Indizio, Partecipa , FileSfida
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -12,7 +12,7 @@ class UtenteAdmin(UserAdmin):
 
 admin.site.register(Utente, UtenteAdmin)
 
-models = [Categoria, Sfida, Flag, Indizio, Partecipa]
+models = [Categoria, Sfida, Flag, Indizio, Partecipa , FileSfida]
 for model in models:
     admin.site.register(model)
 

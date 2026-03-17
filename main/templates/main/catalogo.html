@@ -6,21 +6,51 @@
 
 <h1>Catalogo Sfide</h1>
 
+<form method="GET">
+    <select name="categoria">
+        <option value="">Tutte le categorie</option>
+        {% for cat in categorie %}
+            <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}selected{% endif %}>
+                {{ cat.nome }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <select name="difficolta">
+        <option value="">Tutti i livelli</option>
+        <option value="facile"    {% if request.GET.difficolta == 'facile'    %}selected{% endif %}>Facile</option>
+        <option value="medio"     {% if request.GET.difficolta == 'medio'     %}selected{% endif %}>Medio</option>
+        <option value="difficile" {% if request.GET.difficolta == 'difficile' %}selected{% endif %}>Difficile</option>
+    </select>
+
+    <select name="stato">
+        <option value="">Tutti gli stati</option>
+        <option value="non_iniziata" {% if request.GET.stato == 'non_iniziata' %}selected{% endif %}>Non iniziata</option>
+        <option value="incompleta"   {% if request.GET.stato == 'incompleta'   %}selected{% endif %}>Incompleta</option>
+        <option value="completata"   {% if request.GET.stato == 'completata'   %}selected{% endif %}>Completata</option>
+    </select>
+
+    <button type="submit">Filtra</button>
+    <a href="{% url 'catalogo' %}">Reset</a>
+</form>
+
+<hr>
+
 {% for sfida in sfide %}
     <div>
         <h2>{{ sfida.titolo }}</h2>
         <p>Categoria: {{ sfida.categoria.nome }}</p>
-        <p>Difficoltà: {{ sfida.l_difficolta }}</p>
+        <p>Difficoltà: {{ sfida.difficolta }}</p>
         <p>Punteggio massimo: {{ sfida.p_massimo }}</p>
-         {% if sfida.immagine %}
+        <p>Stato: {{ sfida.stato_utente }}</p>
+        {% if sfida.immagine %}
             <img src="{{ sfida.immagine.url }}" alt="Foto sfida">
-        {% else %}
-            <p>Nessuna foto sfida</p>
         {% endif %}
         <a href="{% url 'sfida_detail' sfida.id %}">Vai alla sfida</a>
     </div>
+    <hr>
 {% empty %}
-    <p>Nessuna sfida disponibile.</p>
+    <p>Nessuna sfida trovata.</p>
 {% endfor %}
 
 {% endblock %}
