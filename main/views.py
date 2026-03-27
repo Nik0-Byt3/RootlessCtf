@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect , get_object_or_404
-from django.contrib.auth import login, logout, authenticate
-from .forms import RegistrazioneForm, LoginForm , ProfiloForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from .models import Utente, Sfida, Flag, Categoria, Indizio, Partecipa
 from django.contrib.auth.forms import PasswordChangeForm
 from django.db.models import Sum
+from .forms import RegistrazioneForm, LoginForm, ProfiloForm
+from .models import Utente, Sfida, Flag, Categoria, Indizio, Partecipa
 
 def home(request):
     return render(request, 'main/home.html')
@@ -186,6 +187,7 @@ def cambio_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
+            messages.success(request, 'Password aggiornata con successo.')
             return redirect('dashboard')
     else:
         form = PasswordChangeForm(request.user)
