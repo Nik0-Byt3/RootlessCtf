@@ -4,9 +4,143 @@
 
 {% block content %}
 
-<h1>Ciao, {{ utente.username }}!</h1>
-<p>Email: {{ utente.email }}</p>
-<p>Punteggio: {{ utente.punteggio }}</p>
-<p>Livello: {{ utente.livello }}</p>
+<div class="max-w-3xl mx-auto">
+
+    <!-- CARD PROFILO -->
+    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8">
+
+        <div class="flex items-center gap-5 mb-6">
+
+            <!-- Avatar -->
+            {% if utente.foto_profilo %}
+                <img src="{{ utente.foto_profilo.url }}" alt="avatar"
+                     class="w-16 h-16 rounded-full object-cover border-2 border-zinc-700 shrink-0">
+            {% else %}
+                <div class="w-16 h-16 rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center text-2xl font-bold text-zinc-400 shrink-0">
+                    {{ utente.username|first|upper }}
+                </div>
+            {% endif %}
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+                <h1 class="text-lg font-bold text-white truncate">{{ utente.username }}</h1>
+                <p class="text-sm text-zinc-500">{{ utente.email }}</p>
+                <div class="flex items-center gap-3 mt-1">
+                    <span class="text-xs px-2 py-0.5 rounded-full border
+                        {% if utente.livello == 'Principiante' %} text-zinc-400 border-zinc-700 bg-zinc-800
+                        {% elif utente.livello == 'Novizio' %} text-blue-400 border-blue-800 bg-blue-900/30
+                        {% elif utente.livello == 'Esperto' %} text-yellow-400 border-yellow-800 bg-yellow-900/30
+                        {% endif %}">
+                        {{ utente.livello }}
+                    </span>
+                    <span class="text-xs text-zinc-500">{{ utente.punteggio }} / {{ punteggio_max_totale }} pt</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra progressi livelli -->
+        <div>
+            <div class="flex justify-between text-xs text-zinc-600 mb-2">
+                <span>Principiante</span>
+                <span>Novizio</span>
+                <span>Esperto</span>
+            </div>
+            <div class="relative w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+                <div class="h-full bg-white rounded-full transition-all duration-500"
+                     style="width: {{ percentuale }}%;"></div>
+                <div class="absolute top-0 h-full w-px bg-zinc-600" style="left: 33.33%;"></div>
+                <div class="absolute top-0 h-full w-px bg-zinc-600" style="left: 66.66%;"></div>
+            </div>
+            <div class="flex justify-between text-xs text-zinc-600 mt-1.5">
+                <span>0</span>
+                <span>{{ soglia_novizio }}</span>
+                <span>{{ punteggio_max_totale }}</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SFIDE IN SOSPESO -->
+    <div class="mb-8">
+        <h2 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <span class="text-yellow-400">◐</span> In sospeso
+            {% if sfide_in_sospeso %}
+            <span class="text-xs text-zinc-600 font-normal">({{ sfide_in_sospeso|length }})</span>
+            {% endif %}
+        </h2>
+
+        {% if sfide_in_sospeso %}
+        <div class="space-y-2">
+            {% for partecipa in sfide_in_sospeso %}
+            <div class="flex items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 hover:border-zinc-600 transition-colors">
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="text-yellow-400 text-xs shrink-0">◐</span>
+                    <div class="min-w-0">
+                        <p class="text-sm text-white font-medium truncate">{{ partecipa.sfida.titolo }}</p>
+                        <p class="text-xs text-zinc-500">
+                            {{ partecipa.sfida.categoria.nome }} ·
+                            <span class="
+                                {% if partecipa.sfida.difficolta == 'facile' %} text-green-400
+                                {% elif partecipa.sfida.difficolta == 'medio' %} text-yellow-400
+                                {% elif partecipa.sfida.difficolta == 'difficile' %} text-red-400
+                                {% endif %}">
+                                {{ partecipa.sfida.difficolta|capfirst }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <a href="{% url 'sfida_detail' partecipa.sfida.id %}"
+                   class="shrink-0 text-xs px-3 py-1.5 rounded border border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-white transition-colors">
+                    Riprendi
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-zinc-600 px-1">Nessuna sfida in sospeso.</p>
+        {% endif %}
+    </div>
+
+    <!-- SFIDE COMPLETATE -->
+    <div>
+        <h2 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <span class="text-green-400">✔</span> Completate
+            {% if sfide_completate %}
+            <span class="text-xs text-zinc-600 font-normal">({{ sfide_completate|length }})</span>
+            {% endif %}
+        </h2>
+
+        {% if sfide_completate %}
+        <div class="space-y-2">
+            {% for partecipa in sfide_completate %}
+            <div class="flex items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="text-green-400 text-xs shrink-0">✔</span>
+                    <div class="min-w-0">
+                        <p class="text-sm text-white font-medium truncate">{{ partecipa.sfida.titolo }}</p>
+                        <p class="text-xs text-zinc-500">
+                            {{ partecipa.sfida.categoria.nome }} ·
+                            <span class="
+                                {% if partecipa.sfida.difficolta == 'facile' %} text-green-400
+                                {% elif partecipa.sfida.difficolta == 'medio' %} text-yellow-400
+                                {% elif partecipa.sfida.difficolta == 'difficile' %} text-red-400
+                                {% endif %}">
+                                {{ partecipa.sfida.difficolta|capfirst }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <span class="shrink-0 text-xs text-green-400 font-mono">
+                    +{{ partecipa.punteggio_ottenuto }} pt
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-zinc-600 px-1">Nessuna sfida completata ancora.</p>
+        {% endif %}
+    </div>
+
+</div>
 
 {% endblock %}

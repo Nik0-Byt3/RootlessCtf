@@ -25,3 +25,6 @@ media/
 # Windows
 Thumbs.db
 ehthumbs.db
+
+# Documentazione varia
+*.md

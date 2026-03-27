@@ -4,6 +4,7 @@ from .forms import RegistrazioneForm, LoginForm , ProfiloForm
 from django.contrib.auth.decorators import login_required
 from .models import Utente, Sfida, Flag, Categoria, Indizio, Partecipa
 from django.contrib.auth.forms import PasswordChangeForm
+from django.db.models import Sum
 
 def home(request):
     return render(request, 'main/home.html')
@@ -37,7 +38,33 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'main/dashboard.html', {'utente': request.user})
+    utente = request.user
+
+    # Sfide completate
+    sfide_completate = Partecipa.objects.filter(
+        utente=utente,
+        stato='completata'
+    ).select_related('sfida', 'sfida__categoria')
+
+    # Sfide in sospeso (incomplete)
+    sfide_in_sospeso = Partecipa.objects.filter(
+        utente=utente,
+        stato='incompleta'
+    ).select_related('sfida', 'sfida__categoria')
+
+    punteggio_max_totale = Sfida.objects.aggregate(Sum('p_massimo'))['p_massimo__sum'] or 1
+    soglia_intermedia = round(punteggio_max_totale * (50 / 150))
+    soglia_esperto = round(punteggio_max_totale * (100 / 150))
+    percentuale = min(round(utente.punteggio / punteggio_max_totale * 100), 100)
+
+    return render(request, 'main/dashboard.html', {
+        'utente': utente,
+        'punteggio_max_totale': punteggio_max_totale,
+        'soglia_intermedia': soglia_intermedia,
+        'percentuale': percentuale,
+        'sfide_completate': sfide_completate,
+        'sfide_in_sospeso': sfide_in_sospeso,
+    })
 
 @login_required
 def catalogo(request):
@@ -108,9 +135,20 @@ def sfida_detail(request, id):
                 if flags_corrette >= set(flags.values_list('id', flat=True)):
                     sfida_appena_completata = True
                     partecipa.stato = 'completata'
+                    punteggio_max_totale = Sfida.objects.aggregate(Sum('p_massimo'))['p_massimo__sum'] or 1
+                    soglia_intermedia = round(punteggio_max_totale * (50 / 150))
+                    soglia_esperto = round(punteggio_max_totale * (100 / 150))
+
                     partecipa.punteggio_ottenuto = max(0, sfida.p_massimo - partecipa.indizi_sbloccati.count() * 5)
                     utente.punteggio += partecipa.punteggio_ottenuto
-                    utente.livello = 'esperto' if utente.punteggio >= 600 else 'intermedio' if utente.punteggio >= 350 else 'principiante'
+
+                    if utente.punteggio >= soglia_esperto:
+                        utente.livello = 'Esperto'
+                    elif utente.punteggio >= soglia_intermedia:
+                        utente.livello = 'Intermedio'
+                    else:
+                        utente.livello = 'Principiante'
+
                     utente.save()
                     partecipa.save()
             else:
