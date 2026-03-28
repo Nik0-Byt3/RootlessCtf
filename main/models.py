@@ -45,6 +45,7 @@ class Sfida(models.Model):
     )
     p_massimo = models.IntegerField()
     immagine = models.ImageField(upload_to='sfide/', blank=True, null=True)
+    link = models.URLField(blank=True, null=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -65,31 +65,15 @@
     <div id="challenge-body" style="display:none;">
 
         <!-- Link alla pagina sfida -->
-        {% if sfida.categoria.nome == 'Web' %}
-        <div class="mb-6 px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-sm flex items-center justify-between">
-            <span class="text-zinc-400">Accedi all'ambiente di sfida</span>
-            <a href="/web/{{ sfida.id }}/" target="_blank"
-               class="text-white text-xs px-3 py-1.5 rounded border border-zinc-600 hover:border-white transition-colors">
-                Apri ↗
-            </a>
-        </div>
-        {% elif sfida.categoria.nome == 'Cryptography' %}
-        <div class="mb-6 px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-sm flex items-center justify-between">
-            <span class="text-zinc-400">Accedi all'ambiente di sfida</span>
-            <a href="/crypto/{{ sfida.id }}/" target="_blank"
-               class="text-white text-xs px-3 py-1.5 rounded border border-zinc-600 hover:border-white transition-colors">
-                Apri ↗
-            </a>
-        </div>
-        {% elif sfida.categoria.nome == 'Forensics' %}
-        <div class="mb-6 px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-sm flex items-center justify-between">
-            <span class="text-zinc-400">Accedi all'ambiente di sfida</span>
-            <a href="/forensics/{{ sfida.id }}/" target="_blank"
-               class="text-white text-xs px-3 py-1.5 rounded border border-zinc-600 hover:border-white transition-colors">
-                Apri ↗
-            </a>
-        </div>
-        {% endif %}
+        {% if sfida.link %}
+<div class="mb-6 px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-sm flex items-center justify-between">
+    <span class="text-zinc-400">Accedi all'ambiente di sfida</span>
+    <a href="{{ sfida.link }}" target="_blank"
+       class="text-white text-xs px-3 py-1.5 rounded border border-zinc-600 hover:border-white transition-colors">
+        Apri ↗
+    </a>
+</div>
+{% endif %}
 
         <!-- Istruzioni -->
         <div class="mb-6 text-sm text-zinc-500">

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexaCorp — Portale Dipendenti</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { mono: ['"JetBrains Mono"', 'monospace'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-zinc-950 text-zinc-300 font-mono min-h-screen flex items-center justify-center px-4">
+
+    <div class="w-full max-w-sm">
+
+        <!-- Logo azienda -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-2 text-white font-bold text-xl tracking-widest uppercase mb-1">
+                <span class="text-blue-400">⬡</span> NexaCorp
+            </div>
+            <p class="text-zinc-600 text-xs tracking-wide">PORTALE ACCESSO DIPENDENTI</p>
+            <div class="mt-3 h-px bg-zinc-800"></div>
+        </div>
+
+        <!-- Errore -->
+        {% if error %}
+        <div class="mb-4 px-4 py-3 rounded border border-red-800 bg-red-900/20 text-red-400 text-xs">
+            ✘ {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Form login -->
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-xs text-zinc-500 mb-1 tracking-wide uppercase">Username</label>
+                <input type="text" name="username" placeholder="nome.cognome"
+                       class="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-zinc-300 outline-none focus:border-zinc-500 transition-colors placeholder-zinc-700"
+                       autocomplete="off">
+            </div>
+
+            <div>
+                <label class="block text-xs text-zinc-500 mb-1 tracking-wide uppercase">Password</label>
+                <input type="password" name="password" placeholder="••••••••"
+                       class="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-zinc-300 outline-none focus:border-zinc-500 transition-colors placeholder-zinc-700">
+            </div>
+
+            <button type="submit"
+                    class="w-full py-2 px-4 rounded bg-blue-600 text-white font-bold text-sm hover:bg-blue-500 transition-colors mt-2">
+                Accedi
+            </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center">
+            <p class="text-zinc-700 text-xs">© 2024 NexaCorp S.r.l. — Accesso riservato al personale autorizzato</p>
+            <!-- TODO: Rimuovere pannello admin at /dashboard/  -->
+            <!-- debug: query eseguita server-side con credenziali utente -->
+        </div>
+
+    </div>
+
+</body>
+<!-- KEY{Html_1s_b0ar1ng} -->
+</html>
