@@ -24,4 +24,5 @@ urlpatterns = [
     path('', include('main.urls')),
     path('sqli/', include('sqli.urls')),
     path('cookie/', include('cookie.urls')),
+    path('visitor/' , include('visitor.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
