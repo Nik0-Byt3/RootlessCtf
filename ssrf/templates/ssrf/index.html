@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkPeek — Screenshot istantaneo di qualsiasi URL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-hero {
+            background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59,130,246,0.15), transparent);
+        }
+        .gradient-btn {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+        }
+        .gradient-btn:hover {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+        }
+        .card-glow {
+            box-shadow: 0 0 0 1px rgba(59,130,246,0.1), 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .input-focus:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { animation: spin 0.8s linear infinite; }
+        .badge {
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            color: #93c5fd;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-300 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="border-b border-white/5 px-8 py-4">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg gradient-btn flex items-center justify-center text-white text-xs font-bold">L</div>
+                <span class="text-white font-semibold text-sm">LinkPeek</span>
+                <span class="badge text-xs px-2 py-0.5 rounded-full ml-1">Beta</span>
+            </div>
+            <nav class="flex items-center gap-6 text-sm text-zinc-500">
+                <a href="#" class="hover:text-white transition-colors">Docs</a>
+                <a href="#" class="hover:text-white transition-colors">API</a>
+                <a href="#" class="hover:text-white transition-colors">Pricing</a>
+                <a href="#" class="text-xs px-3 py-1.5 rounded-lg border border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-white transition-colors">
+                    Sign up
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <div class="gradient-hero">
+        <div class="max-w-3xl mx-auto px-6 pt-16 pb-10 text-center">
+            <div class="badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs mb-6">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                Screenshot istantaneo — nessuna installazione richiesta
+            </div>
+            <h1 class="text-4xl font-extrabold text-white mb-4 leading-tight">
+                Vedi qualsiasi pagina web<br>
+                <span style="background: linear-gradient(90deg, #3b82f6, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">prima di aprirla</span>
+            </h1>
+            <p class="text-zinc-500 text-base mb-10 max-w-lg mx-auto">
+                Incolla un URL e ottieni uno screenshot reale della pagina in pochi secondi.
+                Sicuro, veloce, gratuito.
+            </p>
+
+            <!-- Form principale -->
+            <form method="POST" id="mainForm" class="flex gap-2 max-w-xl mx-auto">
+                {% csrf_token %}
+                <div class="flex-1 relative">
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        </svg>
+                    </div>
+                    <input type="text" name="url" value="{{ url }}"
+                           placeholder="https://esempio.com"
+                           class="mono input-focus w-full bg-zinc-900 border border-zinc-700 rounded-xl pl-9 pr-4 py-3.5 text-sm text-zinc-300 outline-none transition-all placeholder-zinc-700">
+                </div>
+                <button type="submit" id="submitBtn"
+                        class="gradient-btn text-white font-semibold text-sm px-6 py-3.5 rounded-xl transition-all shrink-0 flex items-center gap-2">
+                    <span id="btnText">Screenshot</span>
+                    <svg id="btnIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- URL di esempio cliccabili -->
+            <div class="flex items-center justify-center gap-2 mt-4 flex-wrap">
+                <span class="text-xs text-zinc-600">Prova con:</span>
+                {% for example in examples %}
+                <button onclick="document.querySelector('[name=url]').value='{{ example }}'"
+                        class="mono text-xs px-2.5 py-1 rounded-lg border border-zinc-800 text-zinc-600 hover:text-zinc-400 hover:border-zinc-700 transition-colors">
+                    {{ example }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Risultato -->
+    <div class="max-w-3xl mx-auto px-6 pb-16 w-full">
+
+        {% if error %}
+        <div class="flex items-start gap-3 px-5 py-4 rounded-xl border border-red-800/50 bg-red-900/10 text-red-400 text-sm mb-6">
+            <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        {% if screenshot %}
+        <div class="card-glow rounded-2xl overflow-hidden border border-white/5">
+            <!-- Barra browser -->
+            <div class="bg-zinc-900 border-b border-white/5 px-4 py-3 flex items-center gap-3">
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+                </div>
+                <div class="flex-1 bg-zinc-800 rounded-lg px-3 py-1.5 flex items-center gap-2 min-w-0">
+                    <svg class="w-3 h-3 text-zinc-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <span class="mono text-xs text-zinc-500 truncate">{{ url }}</span>
+                </div>
+                <span class="text-xs text-green-400 shrink-0 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> OK
+                </span>
+            </div>
+            <!-- Screenshot -->
+            <img src="data:image/png;base64,{{ screenshot }}"
+                 class="w-full block" alt="Screenshot di {{ url }}">
+        </div>
+        {% endif %}
+
+        <!-- Features se non c'è ancora nulla -->
+        {% if not screenshot and not error %}
+        <div class="grid grid-cols-3 gap-4 mt-4">
+            <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-5">
+                <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-3 text-blue-400 text-sm">⚡</div>
+                <p class="text-sm font-semibold text-white mb-1">Istantaneo</p>
+                <p class="text-xs text-zinc-600">Screenshot reale in pochi secondi, nessuna attesa.</p>
+            </div>
+            <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-5">
+                <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-3 text-purple-400 text-sm">🔒</div>
+                <p class="text-sm font-semibold text-white mb-1">Sicuro</p>
+                <p class="text-xs text-zinc-600">Non devi aprire link sospetti. Noi lo facciamo per te.</p>
+            </div>
+            <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-5">
+                <div class="w-8 h-8 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-3 text-green-400 text-sm">🌐</div>
+                <p class="text-sm font-semibold text-white mb-1">Qualsiasi URL</p>
+                <p class="text-xs text-zinc-600">Funziona con qualsiasi indirizzo web accessibile.</p>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-white/5 px-8 py-5">
+        <div class="max-w-5xl mx-auto flex items-center justify-between text-xs text-zinc-700">
+            <span>© 2024 LinkPeek — Preview responsabile dei link</span>
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-zinc-500 transition-colors">Privacy</a>
+                <a href="#" class="hover:text-zinc-500 transition-colors">Terms</a>
+            </div>
+        </div>
+        <!-- internal routes moved to /internal/ for security -->
+    </footer>
+
+    <script>
+        document.getElementById('mainForm').addEventListener('submit', function() {
+            document.getElementById('btnText').textContent = 'Caricamento...';
+            document.getElementById('btnIcon').classList.add('spinner');
+            document.getElementById('submitBtn').disabled = true;
+        });
+    </script>
+
+</body>
+</html>

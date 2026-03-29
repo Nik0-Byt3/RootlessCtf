@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'sqli',
     'cookie',
     'visitor',
+    'ssrf',
 ]
 
 MIDDLEWARE = [
