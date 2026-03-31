@@ -8,7 +8,13 @@ from .forms import RegistrazioneForm, LoginForm, ProfiloForm
 from .models import Utente, Sfida, Flag, Categoria, Indizio, Partecipa
 
 def home(request):
-    return render(request, 'main/home.html')
+    steps = [
+        {'titolo': 'Registrati', 'desc': 'Crea il tuo account gratuito in pochi secondi.'},
+        {'titolo': 'Scegli una sfida', 'desc': 'Sfoglia il catalogo e scegli da dove iniziare.'},
+        {'titolo': 'Risolvi', 'desc': 'Analizza, esplora e trova la flag nascosta.'},
+        {'titolo': 'Sali di livello', 'desc': 'Accumula punti e scala la classifica.'},
+    ]
+    return render(request, 'main/home.html' , {'steps' : steps} , )
 
 def registrazione(request):
     if request.method == 'POST':
