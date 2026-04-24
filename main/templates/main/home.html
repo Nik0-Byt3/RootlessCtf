@@ -2,76 +2,221 @@
 
 {% block title %}Home - RootlessCTF{% endblock %}
 
-{% block public_content %}
+{% block content %}
+<!-- Scanline effect -->
+<div class="scanline"></div>
 
-<style>
-    @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-    }
-    @keyframes typing {
-        from { width: 0; }
-        to { width: 100%; }
-    }
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes scanline {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(100vh); }
-    }
-    @keyframes glitch {
-        0%, 100% { transform: translate(0); }
-        20% { transform: translate(-2px, 2px); }
-        40% { transform: translate(2px, -2px); }
-        60% { transform: translate(-1px, 1px); }
-        80% { transform: translate(1px, -1px); }
-    }
-    .cursor {
-        display: inline-block;
-        width: 10px;
-        height: 1.2em;
-        background: #00ff9d;
-        vertical-align: text-bottom;
-        animation: blink 1s step-end infinite;
-    }
-    .terminal-text {
-        font-family: 'JetBrains Mono', monospace;
-    }
-    .scanline {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(transparent, rgba(0,255,157,0.05), transparent);
-        animation: scanline 8s linear infinite;
-        pointer-events: none;
-        z-index: 50;
-    }
-    .fade-up-1 { animation: fadeInUp 0.6s ease forwards; animation-delay: 0.2s; opacity: 0; }
-    .fade-up-2 { animation: fadeInUp 0.6s ease forwards; animation-delay: 0.4s; opacity: 0; }
-    .fade-up-3 { animation: fadeInUp 0.6s ease forwards; animation-delay: 0.6s; opacity: 0; }
-    .fade-up-4 { animation: fadeInUp 0.6s ease forwards; animation-delay: 0.8s; opacity: 0; }
-    .fade-up-5 { animation: fadeInUp 0.6s ease forwards; animation-delay: 1.0s; opacity: 0; }
-    .glitch:hover { animation: glitch 0.3s ease infinite; }
-    .green { color: #00ff9d; }
-    .grid-bg {
-        background-image:
-            linear-gradient(rgba(0,255,157,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,255,157,0.03) 1px, transparent 1px);
-        background-size: 40px 40px;
-    }
-    .card-hover {
-        transition: all 0.2s ease;
-    }
-    .card-hover:hover {
-        border-color: rgba(0,255,157,0.3);
-        box-shadow: 0 0 20px rgba(0,255,157,0.05);
-        transform: translateY(-2px);
-    }
-</style>
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="grid-bg relative min-h-screen flex flex-col items-center justify-center px-6 py-20 text-center overflow-hidden">
+
+    <!-- Glow sfondo -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full"
+             style="background: radial-gradient(circle, rgba(0,255,157,0.06), transparent 70%);"></div>
+    </div>
+
+    <div class="relative z-10 max-w-3xl">
+
+        <!-- Terminal prompt -->
+        <div class="fade-up-1 terminal-text text-sm text-zinc-600 mb-6 flex items-center justify-center gap-2">
+            <span class="green">root@ctf</span>
+            <span class="text-zinc-700">:</span>
+            <span class="text-blue-400">~</span>
+            <span class="text-zinc-700">$</span>
+            <span class="text-zinc-500 ml-1">./rootless_ctf --start</span>
+        </div>
+
+        <!-- Titolo principale -->
+        <h1 class="fade-up-2 terminal-text font-black text-white mb-2 leading-none"
+            style="font-size: clamp(2.5rem, 8vw, 5rem);">
+            Rootless<span class="green glitch">CTF</span>
+        </h1>
+
+        <div class="fade-up-3 terminal-text text-zinc-500 text-sm mb-8 flex items-center justify-center gap-2">
+            <span class="text-zinc-700">[</span>
+            <span>v1.0.0</span>
+            <span class="text-zinc-700">|</span>
+            <span class="green">ONLINE</span>
+            <span class="text-zinc-700">|</span>
+            <span>12 challenges loaded</span>
+            <span class="text-zinc-700">]</span>
+        </div>
+
+        <p class="fade-up-3 text-zinc-400 text-base max-w-xl mx-auto mb-10 leading-relaxed">
+            La piattaforma di <span class="text-white font-medium">Capture The Flag</span> dedicata a tutti —
+            dai principianti agli esperti di cybersecurity. Impara hackerando.
+        </p>
+
+        <!-- CTA buttons -->
+        <div class="fade-up-4 flex items-center justify-center gap-4 flex-wrap">
+            <a href="{% url 'registrazione' %}"
+               class="terminal-text px-6 py-3 rounded-lg font-bold text-sm text-zinc-950 transition-all"
+               style="background: #00ff9d;">
+                $ ./registrati
+            </a>
+            <a href="{% url 'login' %}"
+               class="terminal-text px-6 py-3 rounded-lg font-bold text-sm text-zinc-400 border border-zinc-700 hover:border-zinc-500 hover:text-white transition-all">
+                $ ./accedi
+            </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="fade-up-5 flex items-center justify-center gap-8 mt-14 text-center">
+            <div>
+                <p class="terminal-text text-2xl font-bold text-white">12</p>
+                <p class="text-xs text-zinc-600 mt-1">Sfide</p>
+            </div>
+            <div class="w-px h-8 bg-zinc-800"></div>
+            <div>
+                <p class="terminal-text text-2xl font-bold text-white">3</p>
+                <p class="text-xs text-zinc-600 mt-1">Categorie</p>
+            </div>
+            <div class="w-px h-8 bg-zinc-800"></div>
+            <div>
+                <p class="terminal-text text-2xl font-bold text-white">3</p>
+                <p class="text-xs text-zinc-600 mt-1">Livelli</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-zinc-700 text-xs terminal-text animate-bounce">
+        ↓ scroll
+    </div>
+
+</section>
+
+<!-- ═══════════════ CATEGORIE ═══════════════ -->
+<section class="grid-bg max-w-4xl mx-auto px-6 py-20">
+
+    <div class="text-center mb-12">
+        <p class="terminal-text text-xs text-zinc-600 uppercase tracking-widest mb-2">
+            <span class="green">$</span> ls ./categorie/
+        </p>
+        <h2 class="text-2xl font-bold text-white">Tre categorie, infinite sfide</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <!-- Web -->
+        <div class="card-hover bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <div class="text-3xl mb-4">🌐</div>
+            <h3 class="terminal-text font-bold text-white mb-2">Web</h3>
+            <p class="text-zinc-500 text-sm leading-relaxed mb-4">
+                SQL Injection, Cookie Manipulation, SSRF e altro. Attacca applicazioni web reali nel browser.
+            </p>
+            <div class="flex flex-wrap gap-1">
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-green-400">Easy</span>
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-yellow-400">Medium</span>
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-red-400">Hard</span>
+            </div>
+        </div>
+
+        <!-- Crypto -->
+        <div class="card-hover bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <div class="text-3xl mb-4">🔐</div>
+            <h3 class="terminal-text font-bold text-white mb-2">Cryptography</h3>
+            <p class="text-zinc-500 text-sm leading-relaxed mb-4">
+                Caesar, XOR, RSA, Hash Extension. Rompi cifrari classici e moderni con logica e strumenti.
+            </p>
+            <div class="flex flex-wrap gap-1">
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-green-400">Easy</span>
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-yellow-400">Medium</span>
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-red-400">Hard</span>
+            </div>
+        </div>
+
+        <!-- Forensics -->
+        <div class="card-hover bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <div class="text-3xl mb-4">🔍</div>
+            <h3 class="terminal-text font-bold text-white mb-2">Forensics</h3>
+            <p class="text-zinc-500 text-sm leading-relaxed mb-4">
+                EXIF, steganografia, analisi PCAP. Trova dati nascosti in file, immagini e traffico di rete.
+            </p>
+            <div class="flex flex-wrap gap-1">
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-green-400">Easy</span>
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-yellow-400">Medium</span>
+                <span class="terminal-text text-xs px-2 py-0.5 rounded border border-zinc-800 text-red-400">Hard</span>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ═══════════════ COME FUNZIONA ═══════════════ -->
+<section class="grid-bg border-t border-zinc-900 px-6 py-20">
+    <div class="max-w-4xl mx-auto">
+
+        <div class="text-center mb-12">
+            <p class="terminal-text text-xs text-zinc-600 uppercase tracking-widest mb-2">
+                <span class="green">$</span> cat ./how_it_works.md
+            </p>
+            <h2 class="text-2xl font-bold text-white">Come funziona</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {% for step in steps %}
+            <div class="text-center">
+                <div class="terminal-text text-3xl font-black green mb-3">0{{ forloop.counter }}</div>
+                <p class="text-sm font-semibold text-white mb-1">{{ step.titolo }}</p>
+                <p class="text-xs text-zinc-600 leading-relaxed">{{ step.desc }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<!-- ═══════════════ TERMINAL DEMO ═══════════════ -->
+<section class="grid-bg px-6 py-20">
+    <div class="max-w-2xl mx-auto">
+
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+            <!-- Barra terminale -->
+            <div class="flex items-center gap-2 px-4 py-3 border-b border-zinc-800 bg-zinc-950">
+                <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+                <span class="terminal-text text-xs text-zinc-600 ml-2">bash — rootlessctf</span>
+            </div>
+            <!-- Contenuto terminale -->
+            <div class="p-6 terminal-text text-sm space-y-2">
+                <p><span class="green">root@ctf</span><span class="text-zinc-700">:</span><span class="text-blue-400">~</span><span class="text-zinc-700">$</span> <span class="text-zinc-300">./registrati --username hacker42</span></p>
+                <p class="text-zinc-600">Creazione account in corso...</p>
+                <p class="green">✔ Account creato con successo.</p>
+                <p class="mt-2"><span class="green">root@ctf</span><span class="text-zinc-700">:</span><span class="text-blue-400">~</span><span class="text-zinc-700">$</span> <span class="text-zinc-300">./apri_sfida --id 1 --categoria web</span></p>
+                <p class="text-zinc-600">Caricamento sfida: SQL Injection...</p>
+                <p class="green">✔ Sfida caricata. Buona fortuna.</p>
+                <p class="mt-2"><span class="green">root@ctf</span><span class="text-zinc-700">:</span><span class="text-blue-400">~</span><span class="text-zinc-700">$</span> <span class="text-zinc-300">./consegna_flag KEY{Th1s_1s_...</span></p>
+                <p class="text-zinc-600">Verifica flag...</p>
+                <p class="green">✔ Flag corretta! +100 punti.</p>
+                <p class="mt-2"><span class="green">root@ctf</span><span class="text-zinc-700">:</span><span class="text-blue-400">~</span><span class="text-zinc-700">$</span> <span class="text-zinc-300 mr-1"></span><span class="cursor"></span></p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ═══════════════ CTA FINALE ═══════════════ -->
+<section class="grid-bg border-t border-zinc-900 px-6 py-20 text-center">
+    <div class="max-w-lg mx-auto">
+        <p class="terminal-text text-xs text-zinc-600 uppercase tracking-widest mb-4">
+            <span class="green">$</span> sudo ./inizia_ora
+        </p>
+        <h2 class="text-2xl font-bold text-white mb-3">Pronto a diventare un hacker?</h2>
+        <p class="text-zinc-500 text-sm mb-8">Registrati gratuitamente e inizia a risolvere le sfide.</p>
+        <a href="{% url 'registrazione' %}"
+           class="terminal-text inline-block px-8 py-3.5 rounded-lg font-bold text-sm text-zinc-950 transition-all hover:opacity-90"
+           style="background: #00ff9d;">
+            Inizia ora — è gratis
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block public_content %}
 
 <!-- Scanline effect -->
 <div class="scanline"></div>

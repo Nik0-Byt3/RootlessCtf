@@ -3,165 +3,119 @@
 {% block title %}Dashboard - RootlessCTF{% endblock %}
 
 {% block content %}
+{% load static %}
 
-<div class="max-w-3xl mx-auto">
+<div class="dashboard">
 
-    <!-- Prompt terminale -->
-    <div class="font-mono text-xs text-zinc-600 mb-3 flex items-center gap-2">
-        <span style="color:#00ff9d;">root@ctf</span>
-        <span class="text-zinc-700">:</span>
-        <span class="text-blue-400">~</span>
-        <span class="text-zinc-700">$</span>
-        <span class="text-zinc-500 ml-1">./whoami --verbose</span>
+  <div class="prompt">
+    <span class="prompt-green">root@ctf</span>
+    <span class="prompt-dim">:</span>
+    <span class="prompt-blue">~</span>
+    <span class="prompt-dim">$</span>
+    <span style="color:#52525b; margin-left:0.25rem;">./whoami --verbose</span>
+  </div>
+
+  <div class="card">
+    <div class="profile-header">
+      {% if utente.foto_profilo %}
+        <img src="{{ utente.foto_profilo.url }}" alt="avatar" class="avatar-img">
+      {% else %}
+        <div class="avatar-placeholder">{{ utente.username|first|upper }}</div>
+      {% endif %}
+      <div class="profile-info">
+        <h1 class="username">{{ utente.username }}</h1>
+        <p class="email">{{ utente.email }}</p>
+        <div class="badge-row">
+          <span class="badge
+            {% if utente.livello == 'Principiante' %}badge-principiante
+            {% elif utente.livello == 'Intermedio' %}badge-intermedio
+            {% elif utente.livello == 'Esperto' %}badge-esperto
+            {% endif %}">{{ utente.livello }}</span>
+          <span class="score">
+            <span class="score-value">{{ utente.punteggio }}</span>
+            <span style="color:#3f3f46;"> / </span>
+            {{ punteggio_max_totale }} pt
+          </span>
+        </div>
+      </div>
     </div>
 
-    <!-- CARD PROFILO -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8"
-         style="box-shadow: 0 0 0 1px rgba(0,255,157,0.04), 0 20px 40px rgba(0,0,0,0.3);">
-
-        <div class="flex items-center gap-5 mb-6">
-
-            <!-- Avatar -->
-            {% if utente.foto_profilo %}
-                <img src="{{ utente.foto_profilo.url }}" alt="avatar"
-                     class="w-16 h-16 rounded-full object-cover shrink-0"
-                     style="border: 2px solid rgba(0,255,157,0.3);">
-            {% else %}
-                <div class="w-16 h-16 rounded-full shrink-0 flex items-center justify-center font-mono text-2xl font-bold"
-                     style="background:#0a0a0a; border: 2px solid rgba(0,255,157,0.2); color:#00ff9d;">
-                    {{ utente.username|first|upper }}
-                </div>
-            {% endif %}
-
-            <!-- Info -->
-            <div class="flex-1 min-w-0">
-                <h1 class="font-mono text-lg font-bold text-white truncate">{{ utente.username }}</h1>
-                <p class="font-mono text-xs text-zinc-600 mt-0.5">{{ utente.email }}</p>
-                <div class="flex items-center gap-3 mt-2">
-                    <span class="font-mono text-xs px-2 py-0.5 rounded border
-                        {% if utente.livello == 'Principiante' %} border-zinc-700 bg-zinc-900 text-zinc-400
-                        {% elif utente.livello == 'Intermedio' %} border-blue-800/50 bg-blue-900/10 text-blue-400
-                        {% elif utente.livello == 'Esperto' %} border-yellow-800/50 bg-yellow-900/10 text-yellow-400
-                        {% endif %}">
-                        {{ utente.livello }}
-                    </span>
-                    <span class="font-mono text-xs text-zinc-600">
-                        <span style="color:#00ff9d;">{{ utente.punteggio }}</span>
-                        <span class="text-zinc-700"> / </span>
-                        {{ punteggio_max_totale }} pt
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Barra progressi livelli -->
-        <div>
-            <div class="font-mono flex justify-between text-xs text-zinc-700 mb-2">
-                <span>Principiante</span>
-                <span>Intermedio</span>
-                <span>Esperto</span>
-            </div>
-            <div class="relative w-full h-1.5 rounded-full overflow-hidden" style="background:#0a0a0a;">
-                <div class="h-full rounded-full transition-all duration-700"
-                     style="width: {{ percentuale }}%; background: linear-gradient(90deg, #00ff9d, #00d4ff);"></div>
-                <div class="absolute top-0 h-full w-px" style="left: 33.33%; background: rgba(255,255,255,0.1);"></div>
-                <div class="absolute top-0 h-full w-px" style="left: 66.66%; background: rgba(255,255,255,0.1);"></div>
-            </div>
-            <div class="font-mono flex justify-between text-xs text-zinc-700 mt-1.5">
-                <span>0</span>
-                <span>{{ soglia_intermedio }}</span>
-                <span>{{ punteggio_max_totale }}</span>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- SFIDE IN SOSPESO -->
-    <div class="mb-8">
-        <div class="font-mono text-xs text-zinc-600 mb-3 flex items-center gap-2">
-            <span style="color:#00ff9d;">$</span>
-            <span>./sfide --stato incompleta</span>
-            {% if sfide_in_sospeso %}
-            <span class="text-zinc-700">({{ sfide_in_sospeso|length }} risultati)</span>
-            {% endif %}
-        </div>
-
-        {% if sfide_in_sospeso %}
-        <div class="space-y-2">
-            {% for partecipa in sfide_in_sospeso %}
-            <div class="flex items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 transition-all duration-200"
-                 onmouseover="this.style.borderColor='rgba(0,255,157,0.2)'"
-                 onmouseout="this.style.borderColor='#27272a'">
-                <div class="flex items-center gap-3 min-w-0">
-                    <span class="font-mono text-xs shrink-0" style="color:#facc15;">◐</span>
-                    <div class="min-w-0">
-                        <p class="font-mono text-sm text-white font-medium truncate">{{ partecipa.sfida.titolo }}</p>
-                        <p class="font-mono text-xs text-zinc-600">
-                            {{ partecipa.sfida.categoria.nome }} ·
-                            <span class="
-                                {% if partecipa.sfida.difficolta == 'facile' %} text-green-500
-                                {% elif partecipa.sfida.difficolta == 'medio' %} text-yellow-500
-                                {% elif partecipa.sfida.difficolta == 'difficile' %} text-red-500
-                                {% endif %}">
-                                {{ partecipa.sfida.difficolta }}
-                            </span>
-                        </p>
-                    </div>
-                </div>
-                <a href="{% url 'sfida_detail' partecipa.sfida.id %}"
-                   class="font-mono shrink-0 text-xs px-3 py-1.5 rounded border border-zinc-800 text-zinc-600 transition-all"
-                   onmouseover="this.style.borderColor='rgba(0,255,157,0.3)'; this.style.color='#00ff9d';"
-                   onmouseout="this.style.borderColor='#27272a'; this.style.color='#52525b';">
-                    $ ./riprendi
-                </a>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <p class="font-mono text-xs text-zinc-700 px-1">// nessuna sfida in sospeso.</p>
-        {% endif %}
-    </div>
-
-    <!-- SFIDE COMPLETATE -->
     <div>
-        <div class="font-mono text-xs text-zinc-600 mb-3 flex items-center gap-2">
-            <span style="color:#00ff9d;">$</span>
-            <span>./sfide --stato completata</span>
-            {% if sfide_completate %}
-            <span class="text-zinc-700">({{ sfide_completate|length }} risultati)</span>
-            {% endif %}
-        </div>
-
-        {% if sfide_completate %}
-        <div class="space-y-2">
-            {% for partecipa in sfide_completate %}
-            <div class="flex items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
-                <div class="flex items-center gap-3 min-w-0">
-                    <span class="font-mono text-xs shrink-0" style="color:#00ff9d;">✔</span>
-                    <div class="min-w-0">
-                        <p class="font-mono text-sm text-white font-medium truncate">{{ partecipa.sfida.titolo }}</p>
-                        <p class="font-mono text-xs text-zinc-600">
-                            {{ partecipa.sfida.categoria.nome }} ·
-                            <span class="
-                                {% if partecipa.sfida.difficolta == 'facile' %} text-green-500
-                                {% elif partecipa.sfida.difficolta == 'medio' %} text-yellow-500
-                                {% elif partecipa.sfida.difficolta == 'difficile' %} text-red-500
-                                {% endif %}">
-                                {{ partecipa.sfida.difficolta }}
-                            </span>
-                        </p>
-                    </div>
-                </div>
-                <span class="font-mono shrink-0 text-xs" style="color:#00ff9d;">
-                    +{{ partecipa.punteggio_ottenuto }} pt
-                </span>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <p class="font-mono text-xs text-zinc-700 px-1">// nessuna sfida completata ancora.</p>
-        {% endif %}
+      <div class="progress-labels">
+        <span>Principiante</span><span>Intermedio</span><span>Esperto</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" style="width: {{ percentuale }}%;"></div>
+        <div class="progress-divider" style="left: 33.33%;"></div>
+        <div class="progress-divider" style="left: 66.66%;"></div>
+      </div>
+      <div class="progress-values">
+        <span>0</span><span>{{ soglia_intermedio }}</span><span>{{ punteggio_max_totale }}</span>
+      </div>
     </div>
+  </div>
+
+  <div class="section">
+    <div class="prompt">
+      <span class="prompt-green">$</span>
+      <span>./sfide --stato incompleta</span>
+      {% if sfide_in_sospeso %}<span style="color:#3f3f46;">({{ sfide_in_sospeso|length }} risultati)</span>{% endif %}
+    </div>
+    {% if sfide_in_sospeso %}
+    <div class="sfida-list">
+      {% for partecipa in sfide_in_sospeso %}
+      <div class="sfida-item">
+        <div class="sfida-left">
+          <span class="sfida-icon sfida-icon-pending">◐</span>
+          <div class="sfida-info">
+            <p class="sfida-title">{{ partecipa.sfida.titolo }}</p>
+            <p class="sfida-meta">
+              {{ partecipa.sfida.categoria.nome }} ·
+              <span class="{% if partecipa.sfida.difficolta == 'facile' %}diff-facile{% elif partecipa.sfida.difficolta == 'medio' %}diff-medio{% elif partecipa.sfida.difficolta == 'difficile' %}diff-difficile{% endif %}">
+                {{ partecipa.sfida.difficolta }}
+              </span>
+            </p>
+          </div>
+        </div>
+        <a href="{% url 'sfida_detail' partecipa.sfida.id %}" class="btn-riprendi">$ ./riprendi</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">// nessuna sfida in sospeso.</p>
+    {% endif %}
+  </div>
+
+  <div class="section">
+    <div class="prompt">
+      <span class="prompt-green">$</span>
+      <span>./sfide --stato completata</span>
+      {% if sfide_completate %}<span style="color:#3f3f46;">({{ sfide_completate|length }} risultati)</span>{% endif %}
+    </div>
+    {% if sfide_completate %}
+    <div class="sfida-list">
+      {% for partecipa in sfide_completate %}
+      <div class="sfida-item">
+        <div class="sfida-left">
+          <span class="sfida-icon sfida-icon-done">✔</span>
+          <div class="sfida-info">
+            <p class="sfida-title">{{ partecipa.sfida.titolo }}</p>
+            <p class="sfida-meta">
+              {{ partecipa.sfida.categoria.nome }} ·
+              <span class="{% if partecipa.sfida.difficolta == 'facile' %}diff-facile{% elif partecipa.sfida.difficolta == 'medio' %}diff-medio{% elif partecipa.sfida.difficolta == 'difficile' %}diff-difficile{% endif %}">
+                {{ partecipa.sfida.difficolta }}
+              </span>
+            </p>
+          </div>
+        </div>
+        <span class="score-badge">+{{ partecipa.punteggio_ottenuto }} pt</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">// nessuna sfida completata ancora.</p>
+    {% endif %}
+  </div>
 
 </div>
 

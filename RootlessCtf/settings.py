@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'cookie',
     'visitor',
     'ssrf',
+    'cryptography',
 ]
 
 MIDDLEWARE = [

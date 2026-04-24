@@ -23,21 +23,9 @@
     <!-- JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
-    <style>
-        /* Scrollbar terminale */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #09090b; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
 
-        /* Active nav link */
-        .nav-active {
-            color: #00ff9d !important;
-            background: rgba(0,255,157,0.05) !important;
-            border-left: 2px solid #00ff9d;
-        }
-    </style>
 
     {% block extra_css %}{% endblock %}
 </head>
