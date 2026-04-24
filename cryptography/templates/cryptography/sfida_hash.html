@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="bg-black border border-green-900 p-1">
+        <div class="border border-green-900 p-12">
+            <header class="mb-12 border-b border-green-900 pb-4 flex justify-between items-end">
+                <h1 class="text-4xl font-black text-white uppercase tracking-tighter leading-none">{{ sfida.titolo }}</h1>
+                <span class="text-[10px] text-green-700 font-mono">STATUS: UNAUTHORIZED_SNIFFING</span>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-2">
+                    <p class="text-green-500 text-sm leading-relaxed mb-8">
+                        "{{ sfida.descrizione }}"
+                    </p>
+
+                    <div class="bg-green-950/10 p-6 font-mono text-[11px] border border-green-900/50">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                            <span class="text-white font-bold text-xs uppercase tracking-widest">Intercettazione_Pacchetto_#104</span>
+                        </div>
+                        <p class="mb-1"><span class="text-green-800">DATA_STRING:</span> <span class="text-green-300 italic">user=guest&action=list</span></p>
+                        <p class="mb-1"><span class="text-green-800">HASH_SIG:</span> <span class="text-green-300 italic">e72140999e736aa3cfbd05bcb79edc08</span></p>
+                        <p><span class="text-green-800">KEY_BYTES:</span> <span class="text-green-300 italic">16</span></p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1 border-l border-green-900/30 pl-8 flex flex-col justify-end text-[10px] text-green-900 space-y-4">
+                    <p>L'IA sta utilizzando una firma basata su concatenazione semplice. Il tempo di sessione è limitato.</p>
+                    <p class="text-green-600 font-bold uppercase tracking-widest">Attesa sottomissione comando forgiato...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
