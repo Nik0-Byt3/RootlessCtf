@@ -1,4 +1,13 @@
 /* --------------------------------------------------- css base.html --------------------------------------------------- */
+/* --- Variabili e Reset --- */
+:root {
+    --brand-color: #00ff9d;
+    --bg-dark: #09090b;
+    --border-color: #141414;
+    --text-muted: #52525b;
+    --text-dim: #27272a;
+}
+
 ::-webkit-scrollbar {
     width: 4px;
 }
@@ -21,6 +30,83 @@
     color: #00ff9d !important;
     background: rgba(0, 255, 157, 0.05) !important;
     border-left: 2px solid #00ff9d;
+}
+
+/* --- Sidebar & Layout --- */
+.sidebar {
+    background: var(--bg-dark);
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-footer {
+    border-top: 1px solid var(--border-color);
+}
+
+.nav-section-title {
+    color: var(--text-dim);
+}
+
+/* --- Navigazione --- */
+.nav-link {
+    border-left: 2px solid transparent;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.02);
+    color: #a1a1aa;
+}
+
+.nav-link.active {
+    background: rgba(0, 255, 157, 0.05);
+    color: white;
+    border-left-color: var(--brand-color);
+}
+
+/* --- Pulsanti Custom --- */
+.btn-logout {
+    border: 1px solid #27272a;
+    color: #3f3f46;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+}
+
+.btn-register {
+    border: 1px solid #27272a;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.btn-register:hover {
+    border-color: rgba(0, 255, 157, 0.3);
+    color: var(--brand-color);
+}
+
+/* --- Messaggi Django --- */
+.msg-base {
+    background: var(--bg-dark);
+    border: 1px solid #27272a;
+}
+
+.msg-error {
+    background: rgba(239, 68, 68, 0.05);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.msg-success {
+    background: rgba(0, 255, 157, 0.03);
+    color: var(--brand-color);
+    border-color: rgba(0, 255, 157, 0.5);
 }
 
 /* --------------------------------------------------- css home.html --------------------------------------------------- */
@@ -449,19 +535,282 @@
 
 /* --------------------------------------------------- css cambio_password.html --------------------------------------------------- */
 
- input[type="password"] {
-        width: 100%;
-        background-color: #09090b;
-        border: 1px solid #27272a;
-        border-radius: 0.375rem;
-        padding: 0.5rem 0.75rem;
-        color: #e4e4e7;
-        font-size: 0.875rem;
-        font-family: 'JetBrains Mono', monospace;
-        outline: none;
-        transition: border-color 0.15s;
-    }
-    input[type="password"]:focus {
-        border-color: rgba(0,255,157,0.4);
-        box-shadow: 0 0 0 3px rgba(0,255,157,0.05);
-    }
+/* Applica lo stile a tutti gli input della pagina cambio password */
+input[type="password"],
+input[type="text"],
+input[type="email"] {
+    width: 100% !important;
+    background-color: #09090b !important;
+    border: 1px solid #27272a !important;
+    border-radius: 0.375rem !important;
+    padding: 0.5rem 0.75rem !important;
+    color: #e4e4e7 !important;
+    font-size: 0.875rem !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    outline: none !important;
+    transition: border-color 0.15s;
+    display: block;
+}
+
+input:focus {
+    border-color: rgba(0, 255, 157, 0.4) !important;
+    box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.05) !important;
+}
+
+    /* --- Form e Input --- */
+.form-label {
+    color: var(--brand-color);
+}
+
+.form-help-text {
+    background: rgba(0, 255, 157, 0.02);
+    border: 1px solid rgba(0, 255, 157, 0.1);
+    color: #52525b;
+}
+
+.btn-primary {
+    background: var(--brand-color);
+    color: #09090b;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #00d985; /* Un verde leggermente più scuro per l'hover */
+    transform: translateY(-1px);
+}
+
+/* --- Prompt Terminale --- */
+.terminal-user { color: var(--brand-color); }
+.terminal-dir { color: #60a5fa; } /* blue-400 */
+.terminal-separator { color: #3f3f46; } /* zinc-700 */
+
+
+/* --------------------------------------------------- css catalogo.html --------------------------------------------------- */
+
+/* --- Catalog Selects & Filters --- */
+select {
+    appearance: none; /* Rimuove la freccia di default brutta */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233f3f46'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+    padding-right: 2rem !important;
+}
+
+select:focus {
+    border-color: var(--brand-color) !important;
+}
+
+.btn-reset {
+    border: 1px solid var(--text-dim);
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.btn-reset:hover {
+    border-color: #52525b;
+    color: #a1a1aa;
+}
+
+/* --- Sfida Card --- */
+.sfida-card {
+    background: #18181b;
+    border: 1px solid #27272a;
+    transition: all 0.2s ease;
+}
+
+.sfida-card:hover {
+    border-color: rgba(0, 255, 157, 0.25);
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.04);
+    transform: translateY(-2px);
+}
+
+.sfida-img-placeholder {
+    background: repeating-linear-gradient(45deg, #0a0a0a, #0a0a0a 2px, #111 2px, #111 8px);
+}
+
+/* --- Badge Stati --- */
+.badge-status {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+}
+
+.badge-done { background: rgba(0, 255, 157, 0.05); border-color: rgba(0, 255, 157, 0.2); color: var(--brand-color); }
+.badge-pending { background: rgba(250, 204, 21, 0.05); border-color: rgba(250, 204, 21, 0.2); color: #facc15; }
+.badge-empty { background: transparent; border-color: #27272a; color: #3f3f46; }
+
+/* --- CTA Card --- */
+.btn-card-action {
+    border: 1px solid #27272a;
+    color: #52525b;
+    transition: all 0.2s;
+}
+
+.btn-card-action:hover {
+    border-color: rgba(0, 255, 157, 0.3);
+    color: var(--brand-color);
+}
+
+/* --------------------------------------------------- css login.html --------------------------------------------------- */
+
+
+
+/* --- Login & Auth Pages --- */
+.auth-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    margin-top: 4rem; /* mt-16 */
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 24rem; /* max-w-sm */
+}
+
+.auth-title {
+    color: white;
+    letter-spacing: -0.025em; /* tracking-tight */
+}
+
+.auth-subtitle {
+    color: var(--text-muted);
+}
+
+.auth-footer-link {
+    color: var(--text-muted);
+}
+
+.auth-footer-link a {
+    color: #a1a1aa;
+    transition: color 0.2s;
+}
+
+.auth-footer-link a:hover {
+    color: white;
+}
+
+/* --------------------------------------------------- css registrazione.html --------------------------------------------------- */
+
+/* --- File Input Styling --- */
+input[type="file"] {
+    width: 100%;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--text-dim);
+    border-radius: 0.375rem;
+    padding: 0.4rem 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    background-color: #18181b;
+    color: #a1a1aa;
+    border: 1px solid var(--text-dim);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    margin-right: 0.75rem;
+    transition: all 0.15s;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: var(--text-dim);
+    color: #e4e4e7;
+}
+
+/* --------------------------------------------------- css profilo.html --------------------------------------------------- */
+
+/* --- Profile Specific --- */
+.profile-avatar-container {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profile-avatar-img {
+    border: 2px solid rgba(0, 255, 157, 0.3);
+}
+
+.profile-avatar-placeholder {
+    background: #0a0a0a;
+    border: 2px solid rgba(0, 255, 157, 0.2);
+    color: var(--brand-color);
+}
+
+/* Campi Read-Only / Bloccat */
+.field-readonly {
+    background: #09090b;
+    border: 1px solid #1c1c1c;
+    color: var(--text-muted); /* Colore zinc-500 */
+}
+
+.field-readonly-score {
+    color: var(--brand-color) !important;
+}
+
+.field-label-muted {
+    color: var(--text-dim); /* Colore zinc-700 */
+}
+
+/* --------------------------------------------------- css sfida_detail.html --------------------------------------------------- */
+
+/* --- Challenge Detail & Execution --- */
+.challenge-box {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+}
+
+.challenge-description {
+    background: #09090b;
+    border: 1px solid #1c1c1c;
+    line-height: 1.6;
+}
+
+/* Badge Difficoltà */
+.badge-diff { border-radius: 4px; border: 1px solid; }
+.diff-facile { color: #22c55e; border-color: rgba(22, 163, 74, 0.5); background: rgba(22, 163, 74, 0.1); }
+.diff-medio { color: #eab308; border-color: rgba(202, 138, 4, 0.5); background: rgba(202, 138, 4, 0.1); }
+.diff-difficile { color: #ef4444; border-color: rgba(220, 38, 38, 0.5); background: rgba(220, 38, 38, 0.1); }
+
+/* Feedback Flag */
+.flag-container {
+    background: #09090b;
+    border: 1px solid #1c1c1c;
+}
+
+.flag-success {
+    background: rgba(0, 255, 157, 0.03);
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    color: var(--brand-color);
+}
+
+.flag-input {
+    background: #000 !important;
+    border: 1px solid #27272a !important;
+    color: #e4e4e7 !important;
+}
+
+/* Indizi (Hints) */
+.hint-box {
+    background: rgba(234, 179, 8, 0.03);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    color: #ca8a04;
+}
+
+.btn-hint {
+    color: #3f3f46;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.btn-hint:hover {
+    color: #eab308;
+}
+

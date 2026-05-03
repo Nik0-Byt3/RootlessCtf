@@ -1,31 +1,30 @@
-{% extends 'main/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Login - RootlessCTF{% endblock %}
 
 {% block public_content %}
 
-<div class="flex-1 flex items-center justify-center px-4 mt-16">
-    <div class="w-full max-w-sm">
+<div class="auth-container">
+    <div class="auth-card">
 
         <!-- Prompt terminale -->
         <div class="font-mono text-xs text-zinc-600 mb-6 flex items-center gap-2">
-            <span style="color:#00ff9d;">root@ctf</span>
-            <span class="text-zinc-700">:</span>
-            <span class="text-blue-400">~</span>
-            <span class="text-zinc-700">$</span>
+            <span class="terminal-user">root@ctf</span>
+            <span class="terminal-separator">:</span>
+            <span class="terminal-dir">~</span>
+            <span class="terminal-separator">$</span>
             <span class="text-zinc-500 ml-1">./login --user</span>
         </div>
 
         <!-- Titolo -->
         <div class="mb-8">
-            <h1 class="font-mono text-2xl font-bold text-white tracking-tight">Accedi</h1>
-            <p class="font-mono text-xs text-zinc-600 mt-1">// bentornato su RootlessCTF</p>
+            <h1 class="auth-title font-mono text-2xl font-bold">Accedi</h1>
+            <p class="auth-subtitle font-mono text-xs mt-1">// bentornato su RootlessCTF</p>
         </div>
 
-        <!-- Errore -->
+        <!-- Errore (usa le classi msg-error che abbiamo in style.css) -->
         {% if errore %}
-        <div class="font-mono mb-4 px-4 py-3 rounded border text-xs"
-             style="border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); color: #f87171;">
+        <div class="msg-base msg-error font-mono mb-4 px-4 py-3 rounded text-xs">
             ✘ {{ errore }}
         </div>
         {% endif %}
@@ -36,9 +35,7 @@
 
             {% for field in form %}
             <div>
-                <label for="{{ field.id_for_label }}"
-                       class="font-mono block text-xs mb-1"
-                       style="color:#00ff9d;">
+                <label for="{{ field.id_for_label }}" class="form-label font-mono block text-xs mb-1">
                     — {{ field.label }}
                 </label>
                 {{ field }}
@@ -48,43 +45,18 @@
             </div>
             {% endfor %}
 
-            <button type="submit"
-                    class="font-mono w-full mt-2 py-2.5 px-4 rounded text-sm font-bold transition-all hover:opacity-90"
-                    style="background:#00ff9d; color:#09090b;">
+            <button type="submit" class="btn-primary font-mono w-full mt-2 py-2.5 px-4 rounded text-sm font-bold">
                 $ ./accedi
             </button>
         </form>
 
         <!-- Link registrazione -->
-        <p class="font-mono text-center text-xs text-zinc-600 mt-6">
+        <p class="auth-footer-link font-mono text-center text-xs mt-6">
             // non hai un account?
-            <a href="{% url 'registrazione' %}" class="text-zinc-400 hover:text-white transition-colors ml-1">./registrati</a>
+            <a href="{% url 'registrazione' %}" class="ml-1">./registrati</a>
         </p>
 
     </div>
 </div>
-
-<style>
-    input[type="text"],
-    input[type="password"],
-    input[type="email"] {
-        width: 100%;
-        background-color: #09090b;
-        border: 1px solid #27272a;
-        border-radius: 0.375rem;
-        padding: 0.5rem 0.75rem;
-        color: #e4e4e7;
-        font-size: 0.875rem;
-        font-family: 'JetBrains Mono', monospace;
-        outline: none;
-        transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    input[type="text"]:focus,
-    input[type="password"]:focus,
-    input[type="email"]:focus {
-        border-color: rgba(0,255,157,0.4);
-        box-shadow: 0 0 0 3px rgba(0,255,157,0.05);
-    }
-</style>
 
 {% endblock %}
