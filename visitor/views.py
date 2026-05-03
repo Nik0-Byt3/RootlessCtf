@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 FLAG = 'KEY{0n3_th0usand_v1s1t0rs}'
-SPECIAL_VISITOR = 55
+SPECIAL_VISITOR = 1000
 
 
 def index(request):
