@@ -108,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'main.Utente'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Internationalization

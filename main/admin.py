@@ -1,19 +1,23 @@
 from django.contrib import admin
-from .models import Utente, Categoria, Sfida, Flag, Indizio, Partecipa , FileSfida
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+from .models import Categoria, Sfida, Flag, Indizio, Profilo, Partecipa, FileSfida
 
+class ProfiloInline(admin.StackedInline):
+    model = Profilo
+    can_delete = False
+    verbose_name_plural = 'Profilo CTF'
+    filter_horizontal = ('flag',)
 
-class UtenteAdmin(UserAdmin):
-    fieldsets = UserAdmin.fieldsets + (
-        ('Informazioni CTF', {
-            'fields': ('foto_profilo', 'punteggio', 'livello', 'flag')
-        }),
-    )
+class PersonalizzatoUserAdmin(UserAdmin):
+    inlines = (ProfiloInline,)
 
-admin.site.register(Utente, UtenteAdmin)
+admin.site.unregister(User)
+admin.site.register(User, PersonalizzatoUserAdmin)
 
-models = [Categoria, Sfida, Flag, Indizio, Partecipa , FileSfida]
-for model in models:
-    admin.site.register(model)
-
-
+admin.site.register(Categoria)
+admin.site.register(Sfida)
+admin.site.register(Flag)
+admin.site.register(Indizio)
+admin.site.register(Partecipa)
+admin.site.register(FileSfida)

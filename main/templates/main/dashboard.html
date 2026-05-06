@@ -17,22 +17,25 @@
 
   <div class="card">
     <div class="profile-header">
-      {% if utente.foto_profilo %}
-        <img src="{{ utente.foto_profilo.url }}" alt="avatar" class="avatar-img">
+      {% if utente.profilo.foto_profilo %}
+        <img src="{{ utente.profilo.foto_profilo.url }}" alt="avatar" class="avatar-img">
       {% else %}
         <div class="avatar-placeholder">{{ utente.username|first|upper }}</div>
       {% endif %}
+
       <div class="profile-info">
         <h1 class="username">{{ utente.username }}</h1>
         <p class="email">{{ utente.email }}</p>
         <div class="badge-row">
           <span class="badge
-            {% if utente.livello == 'Principiante' %}badge-principiante
-            {% elif utente.livello == 'Intermedio' %}badge-intermedio
-            {% elif utente.livello == 'Esperto' %}badge-esperto
-            {% endif %}">{{ utente.livello }}</span>
+            {% if utente.profilo.livello == 'principiante' %}badge-principiante
+            {% elif utente.profilo.livello == 'intermedio' %}badge-intermedio
+            {% elif utente.profilo.livello == 'esperto' %}badge-esperto
+            {% endif %}">
+            {{ utente.profilo.get_livello_display }} </span>
+
           <span class="score">
-            <span class="score-value">{{ utente.punteggio }}</span>
+            <span class="score-value">{{ utente.profilo.punteggio }}</span>
             <span style="color:#3f3f46;"> / </span>
             {{ punteggio_max_totale }} pt
           </span>
@@ -50,7 +53,7 @@
         <div class="progress-divider" style="left: 66.66%;"></div>
       </div>
       <div class="progress-values">
-        <span>0</span><span>{{ soglia_intermedio }}</span><span>{{ punteggio_max_totale }}</span>
+        <span>0</span><span>{{ soglia_intermedia }}</span><span>{{ punteggio_max_totale }}</span>
       </div>
     </div>
   </div>

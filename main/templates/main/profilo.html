@@ -5,7 +5,6 @@
 {% block content %}
 <div class="max-w-md mx-auto">
 
-    <!-- Prompt terminale -->
     <div class="font-mono text-xs text-zinc-600 mb-3 flex items-center gap-2">
         <span class="terminal-user">root@ctf</span>
         <span class="terminal-separator">:</span>
@@ -19,10 +18,9 @@
     <form method="POST" enctype="multipart/form-data" class="space-y-5">
         {% csrf_token %}
 
-        <!-- Foto profilo -->
         <div class="profile-avatar-container flex flex-col items-center gap-4 pb-5">
-            {% if user.foto_profilo %}
-                <img src="{{ user.foto_profilo.url }}" alt="Foto profilo"
+            {% if user.profilo.foto_profilo %}
+                <img src="{{ user.profilo.foto_profilo.url }}" alt="Foto profilo"
                      class="profile-avatar-img w-28 h-28 rounded-full object-cover">
             {% else %}
                 <div class="profile-avatar-placeholder w-28 h-28 rounded-full flex items-center justify-center font-mono text-3xl font-bold">
@@ -34,7 +32,6 @@
             </div>
         </div>
 
-        <!-- Username (non modificabile) -->
         <div>
             <span class="field-label-muted font-mono block text-xs mb-1">// username (read-only)</span>
             <p class="field-readonly font-mono text-sm px-3 py-2 rounded">
@@ -42,7 +39,6 @@
             </p>
         </div>
 
-        <!-- Nome -->
         <div>
             <label for="{{ form.first_name.id_for_label }}" class="form-label font-mono block text-xs mb-1">
                 — Nome
@@ -53,7 +49,6 @@
             {% endif %}
         </div>
 
-        <!-- Cognome -->
         <div>
             <label for="{{ form.last_name.id_for_label }}" class="form-label font-mono block text-xs mb-1">
                 — Cognome
@@ -64,7 +59,6 @@
             {% endif %}
         </div>
 
-        <!-- Email -->
         <div>
             <label for="{{ form.email.id_for_label }}" class="form-label font-mono block text-xs mb-1">
                 — Email
@@ -75,18 +69,17 @@
             {% endif %}
         </div>
 
-        <!-- Livello e punteggio -->
         <div class="flex gap-4">
             <div class="flex-1">
                 <span class="field-label-muted font-mono block text-xs mb-1">// livello (read-only)</span>
                 <p class="field-readonly font-mono text-sm px-3 py-2 rounded">
-                    {{ user.livello }}
+                    {{ user.profilo.get_livello_display }}
                 </p>
             </div>
             <div class="flex-1">
                 <span class="field-label-muted font-mono block text-xs mb-1">// punteggio (read-only)</span>
                 <p class="field-readonly field-readonly-score font-mono text-sm px-3 py-2 rounded">
-                    {{ user.punteggio }} pt
+                    {{ user.profilo.punteggio }} pt
                 </p>
             </div>
         </div>

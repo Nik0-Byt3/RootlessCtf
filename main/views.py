@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.db.models import Sum
 from .forms import RegistrazioneForm, LoginForm, ProfiloForm
-from .models import Utente, Sfida, Flag, Categoria, Indizio, Partecipa
+from .models import Sfida, Flag, Categoria, Indizio, Partecipa, Profilo
+
 
 def home(request):
     steps = [
@@ -14,17 +15,23 @@ def home(request):
         {'titolo': 'Risolvi', 'desc': 'Analizza, esplora e trova la flag nascosta.'},
         {'titolo': 'Sali di livello', 'desc': 'Accumula punti e scala la classifica.'},
     ]
-    return render(request, 'main/home.html' , {'steps' : steps} , )
+    return render(request, 'main/home.html', {'steps': steps})
+
 
 def registrazione(request):
     if request.method == 'POST':
         form = RegistrazioneForm(request.POST)
         if form.is_valid():
             user = form.save()
+
+            ### MODIFICATO: Crea automaticamente il profilo associato al nuovo utente
+            Profilo.objects.create(user=user)
+
             return redirect('login')
     else:
         form = RegistrazioneForm()
     return render(request, 'main/registrazione.html', {'form': form})
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -34,14 +41,17 @@ def login_view(request):
             login(request, user)
             return redirect('dashboard')
         else:
-            return render(request, 'main/login.html', {'form': form, 'errore': 'Credenziali errate: username o password invalidi'})
+            return render(request, 'main/login.html',
+                          {'form': form, 'errore': 'Credenziali errate: username o password invalidi'})
     else:
         form = LoginForm()
     return render(request, 'main/login.html', {'form': form})
 
+
 def logout_view(request):
     logout(request)
     return redirect('login')
+
 
 @login_required
 def dashboard(request):
@@ -62,7 +72,9 @@ def dashboard(request):
     punteggio_max_totale = Sfida.objects.aggregate(Sum('p_massimo'))['p_massimo__sum'] or 1
     soglia_intermedia = round(punteggio_max_totale * (50 / 150))
     soglia_esperto = round(punteggio_max_totale * (100 / 150))
-    percentuale = min(round(utente.punteggio / punteggio_max_totale * 100), 100)
+
+    ### MODIFICATO: utente.punteggio diventa utente.profilo.punteggio
+    percentuale = min(round(utente.profilo.punteggio / punteggio_max_totale * 100), 100)
 
     return render(request, 'main/dashboard.html', {
         'utente': utente,
@@ -72,6 +84,7 @@ def dashboard(request):
         'sfide_completate': sfide_completate,
         'sfide_in_sospeso': sfide_in_sospeso,
     })
+
 
 @login_required
 def catalogo(request):
@@ -104,6 +117,7 @@ def catalogo(request):
         'categorie': categorie,
     })
 
+
 @login_required
 def sfida_detail(request, id):
     sfida = get_object_or_404(Sfida, id=id)
@@ -111,10 +125,11 @@ def sfida_detail(request, id):
     utente = request.user
     partecipa, _ = Partecipa.objects.get_or_create(utente=utente, sfida=sfida)
 
-    flags_corrette = set(utente.flag.filter(sfida=sfida).values_list('id', flat=True))
+    ### MODIFICATO: utente.flag diventa utente.profilo.flag
+    flags_corrette = set(utente.profilo.flag.filter(sfida=sfida).values_list('id', flat=True))
     indizi_sbloccati = set(partecipa.indizi_sbloccati.values_list('flag_id', flat=True))
     flag_feedback_id = flag_ok = indizio_sbloccato = None
-    sfida_appena_completata = False  # dichiarato qui, sempre disponibile
+    sfida_appena_completata = False
 
     if request.method == 'POST':
         if partecipa.stato == 'non_iniziata':
@@ -136,7 +151,8 @@ def sfida_detail(request, id):
             flag_input = request.POST.get('flag_input', '').strip()
             flag_feedback_id = flag.id
             if flag_input == flag.chiave and flag.id not in flags_corrette:
-                utente.flag.add(flag)
+                ### MODIFICATO: Aggiungi la flag al profilo, non all'utente direttamente
+                utente.profilo.flag.add(flag)
                 flags_corrette.add(flag.id)
                 flag_ok = True
                 if flags_corrette >= set(flags.values_list('id', flat=True)):
@@ -147,16 +163,19 @@ def sfida_detail(request, id):
                     soglia_esperto = round(punteggio_max_totale * (100 / 150))
 
                     partecipa.punteggio_ottenuto = max(0, sfida.p_massimo - partecipa.indizi_sbloccati.count() * 5)
-                    utente.punteggio += partecipa.punteggio_ottenuto
 
-                    if utente.punteggio >= soglia_esperto:
-                        utente.livello = 'Esperto'
-                    elif utente.punteggio >= soglia_intermedia:
-                        utente.livello = 'Intermedio'
+                    ### MODIFICATO: Modifica i dati sul profilo
+                    utente.profilo.punteggio += partecipa.punteggio_ottenuto
+
+                    if utente.profilo.punteggio >= soglia_esperto:
+                        utente.profilo.livello = 'esperto'  # Usa i valori minuscoli definiti nelle TextChoices
+                    elif utente.profilo.punteggio >= soglia_intermedia:
+                        utente.profilo.livello = 'intermedio'
                     else:
-                        utente.livello = 'Principiante'
+                        utente.profilo.livello = 'principiante'
 
-                    utente.save()
+                    ### MODIFICATO: Salva il profilo anziché l'utente
+                    utente.profilo.save()
                     partecipa.save()
             else:
                 flag_ok = False
@@ -175,16 +194,21 @@ def sfida_detail(request, id):
         'partecipa_punteggio': partecipa.punteggio_ottenuto,
     })
 
+
 @login_required
 def profilo(request):
+    ### MODIFICATO: L'istanza del form deve essere il profilo (request.user.profilo) e non l'utente
     if request.method == 'POST':
-        form = ProfiloForm(request.POST, request.FILES, instance=request.user)
+        form = ProfiloForm(request.POST, request.FILES, instance=request.user.profilo)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Profilo aggiornato con successo.')
+            return redirect('profilo')
     else:
-        form = ProfiloForm(instance=request.user)
+        form = ProfiloForm(instance=request.user.profilo)
 
     return render(request, 'main/profilo.html', {'form': form})
+
 
 @login_required
 def cambio_password(request):

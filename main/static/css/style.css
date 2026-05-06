@@ -3,9 +3,10 @@
 :root {
     --brand-color: #00ff9d;
     --bg-dark: #09090b;
-    --border-color: #141414;
-    --text-muted: #52525b;
-    --text-dim: #27272a;
+    --border-color: #27272a;
+    --text-main: #e4e4e7;
+    --text-muted: #a1a1aa;
+    --text-dim: #71717a;
 }
 
 ::-webkit-scrollbar {
@@ -42,6 +43,9 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+.custom_text{
+    color: var(--text-main);
+}
 .sidebar-footer {
     border-top: 1px solid var(--border-color);
 }
