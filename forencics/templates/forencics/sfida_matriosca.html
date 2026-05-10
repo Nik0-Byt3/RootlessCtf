@@ -1,0 +1,42 @@
+{% extends "forencics/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="terminal-container">
+
+    <div class="terminal-header">
+        <h2># SFIDA_10: {{ challenge_name|upper }}</h2>
+        <p class="terminal-status">STATUS: REPERTO INTERCETTATO | LIVELLO: {{ difficulty|upper }}</p>
+    </div>
+
+    <div class="briefing-section">
+        <h3 class="briefing-title">[ MISSION_BRIEFING ]</h3>
+        <p>I nostri sensori hanno rilevato un'anomalia dimensionale nel file immagine allegato. Nonostante appaia come una comune fotografia, il peso in byte non corrisponde alla risoluzione visibile.</p>
+        <p>Sospettiamo l'uso di una <strong>matriosca binaria</strong>: un archivio è stato fuso con i dati dell'immagine. Il tuo obiettivo è separare i flussi e recuperare la Flag.</p>
+    </div>
+
+    <div class="evidence-box">
+        <i class="fas fa-file-archive evidence-icon"></i>
+        <h4>REPERTO_BINARIO.JPG</h4>
+        <p class="evidence-hash">MD5: 8f92c31b9d7a4e5e6f7a8b9c0d1e2f3g</p>
+
+        {% for file_obj in sfida.filesfida_set.all %}
+            <a href="{{ file_obj.file.url }}" download class="btn-carving">
+                <i class="fas fa-download"></i> Inizia Carving
+            </a>
+        {% empty %}
+            <p style="color: #ff4444;">[ ERRORE: File non presente nel database ]</p>
+        {% endfor %}
+    </div>
+
+    <div class="console-tips">
+        <p class="console-tips-title">// SUGGERIMENTI_TECNICI:</p>
+        <ul class="console-list">
+            <li>> Analizza la struttura esadecimale alla ricerca di header 'PK'.</li>
+            <li>> Strumenti consigliati: Binwalk, Strings, o Hex Editors.</li>
+            <li>> Attenzione ai falsi positivi inseriti per depistaggio.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

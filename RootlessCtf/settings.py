@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'visitor',
     'ssrf',
     'cryptography',
+    'forencics',
 ]
 
 MIDDLEWARE = [

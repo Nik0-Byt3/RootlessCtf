@@ -44,7 +44,7 @@
             $ filtra
         </button>
 
-        <a href="{% url 'catalogo' %}" class="btn-reset font-mono px-4 py-2 text-xs rounded">
+        <a href="{% url 'main:catalogo' %}" class="btn-reset font-mono px-4 py-2 text-xs rounded">
             $ reset
         </a>
     </form>
@@ -93,7 +93,7 @@
                 </div>
 
                 <!-- CTA -->
-                <a href="{% url 'sfida_detail' sfida.id %}" class="btn-card-action font-mono block text-center text-xs py-2 rounded">
+                <a href="{% url 'main:sfida_detail' sfida.id %}" class="btn-card-action font-mono block text-center text-xs py-2 rounded">
                     $ {% if sfida.stato_utente == 'incompleta' %}./riprendi{% elif sfida.stato_utente == 'completata' %}./rivedi{% else %}./inizia{% endif %}
                 </a>
             </div>

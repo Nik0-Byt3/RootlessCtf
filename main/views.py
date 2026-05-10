@@ -24,10 +24,9 @@ def registrazione(request):
         if form.is_valid():
             user = form.save()
 
-            ### MODIFICATO: Crea automaticamente il profilo associato al nuovo utente
             Profilo.objects.create(user=user)
 
-            return redirect('login')
+            return redirect('main:login')
     else:
         form = RegistrazioneForm()
     return render(request, 'main/registrazione.html', {'form': form})
@@ -39,7 +38,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('dashboard')
+            return redirect('main:dashboard')
         else:
             return render(request, 'main/login.html',
                           {'form': form, 'errore': 'Credenziali errate: username o password invalidi'})
@@ -50,7 +49,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('main:login')
 
 
 @login_required
@@ -72,8 +71,6 @@ def dashboard(request):
     punteggio_max_totale = Sfida.objects.aggregate(Sum('p_massimo'))['p_massimo__sum'] or 1
     soglia_intermedia = round(punteggio_max_totale * (50 / 150))
     soglia_esperto = round(punteggio_max_totale * (100 / 150))
-
-    ### MODIFICATO: utente.punteggio diventa utente.profilo.punteggio
     percentuale = min(round(utente.profilo.punteggio / punteggio_max_totale * 100), 100)
 
     return render(request, 'main/dashboard.html', {
@@ -218,7 +215,7 @@ def cambio_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Password aggiornata con successo.')
-            return redirect('dashboard')
+            return redirect('main:dashboard')
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'main/cambio_password.html', {'form': form})

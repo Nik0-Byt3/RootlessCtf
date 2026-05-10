@@ -11,4 +11,5 @@ urlpatterns = [
     path('visitor/' , include('visitor.urls')),
     path('ssrf/', include('ssrf.urls')),
     path('cryptography/' , include('cryptography.urls')),
+    path('forencics/' , include('forencics.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

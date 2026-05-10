@@ -36,7 +36,7 @@
         <!-- SIDEBAR -->
         <aside class="sidebar w-56 shrink-0 flex flex-col fixed h-full">
             <div class="sidebar-header px-5 py-6">
-                <a href="{% url 'home' %}" class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase">
+                <a href="{% url 'main:home' %}" class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase">
                     <span class="text-brand">⌗</span>
                     <span class="text-white">RootlessCTF</span>
                 </a>
@@ -47,22 +47,22 @@
                 <p class="nav-section-title font-mono text-xs px-3 mb-2">-- navigazione</p>
                 <ul class="space-y-0.5">
                     <li>
-                        <a href="{% url 'dashboard' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_dashboard %}{% endblock %}">
+                        <a href="{% url 'main:dashboard' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_dashboard %}{% endblock %}">
                             <span class="text-brand">◈</span> Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'catalogo' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_catalogo %}{% endblock %}">
+                        <a href="{% url 'main:catalogo' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_catalogo %}{% endblock %}">
                             <span class="text-brand">◉</span> Catalogo Sfide
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'profilo' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_profilo %}{% endblock %}">
+                        <a href="{% url 'main:profilo' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_profilo %}{% endblock %}">
                             <span class="text-brand">◎</span> Area Utente
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'cambio_password' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_passsword %}{% endblock %}">
+                        <a href="{% url 'main:cambio_password' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_passsword %}{% endblock %}">
                             <span class="text-brand">◎</span> Cambio Password
                         </a>
                     </li>
@@ -74,7 +74,7 @@
                     <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-brand"></span>
                     <span class="text-xs text-zinc-600 truncate">{{ user.username }}</span>
                 </div>
-                <a href="{% url 'logout' %}" class="btn-logout font-mono block text-center text-xs px-3 py-1.5 rounded">
+                <a href="{% url 'main:logout' %}" class="btn-logout font-mono block text-center text-xs px-3 py-1.5 rounded">
                     $ logout
                 </a>
             </div>
@@ -102,15 +102,15 @@
     <!-- LAYOUT PUBBLICO -->
     <div class="min-h-screen flex flex-col">
         <nav class="px-8 py-4 flex items-center justify-between border-b border-zinc-900">
-            <a href="{% url 'home' %}" class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase">
+            <a href="{% url 'main:home' %}" class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase">
                 <span class="text-brand">⌗</span>
                 <span class="text-white">RootlessCTF</span>
             </a>
             <div class="flex items-center gap-4">
-                <a href="{% url 'login' %}" class="font-mono text-xs text-zinc-600 hover:text-white transition-colors">
+                <a href="{% url 'main:login' %}" class="font-mono text-xs text-zinc-600 hover:text-white transition-colors">
                     $ ./login
                 </a>
-                <a href="{% url 'registrazione' %}" class="btn-register font-mono text-xs px-4 py-2 rounded">
+                <a href="{% url 'main:registrazione' %}" class="btn-register font-mono text-xs px-4 py-2 rounded">
                     $ ./registrati
                 </a>
             </div>
