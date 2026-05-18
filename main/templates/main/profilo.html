@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Profilo - RootlessCTF{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+
+    <div class="font-mono text-xs text-zinc-600 mb-3 flex items-center gap-2">
+        <span class="terminal-user">root@ctf</span>
+        <span class="terminal-separator">:</span>
+        <span class="terminal-dir">~</span>
+        <span class="terminal-separator">$</span>
+        <span class="text-zinc-500 ml-1">./profilo --edit</span>
+    </div>
+
+    <h1 class="font-mono text-xl font-bold text-white mb-8">Il tuo profilo</h1>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+
+        <div class="profile-avatar-container flex flex-col items-center gap-4 pb-5">
+            {% if user.profilo.foto_profilo %}
+                <img src="{{ user.profilo.foto_profilo.url }}" alt="Foto profilo"
+                     class="profile-avatar-img w-28 h-28 rounded-full object-cover">
+            {% else %}
+                <div class="profile-avatar-placeholder w-28 h-28 rounded-full flex items-center justify-center font-mono text-3xl font-bold">
+                    {{ user.username|first|upper }}
+                </div>
+            {% endif %}
+            <div class="w-full">
+                {{ form.foto_profilo }}
+            </div>
+        </div>
+
+        <div>
+            <span class="field-label-muted font-mono block text-xs mb-1">// username (read-only)</span>
+            <p class="field-readonly font-mono text-sm px-3 py-2 rounded">
+                {{ user.username }}
+            </p>
+        </div>
+
+        <div>
+            <label for="{{ form.first_name.id_for_label }}" class="form-label font-mono block text-xs mb-1">
+                — Nome
+            </label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+            <p class="font-mono text-red-400 text-xs mt-1">✘ {{ form.first_name.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.last_name.id_for_label }}" class="form-label font-mono block text-xs mb-1">
+                — Cognome
+            </label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+            <p class="font-mono text-red-400 text-xs mt-1">✘ {{ form.last_name.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.email.id_for_label }}" class="form-label font-mono block text-xs mb-1">
+                — Email
+            </label>
+            {{ form.email }}
+            {% if form.email.errors %}
+            <p class="font-mono text-red-400 text-xs mt-1">✘ {{ form.email.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        <div class="flex gap-4">
+            <div class="flex-1">
+                <span class="field-label-muted font-mono block text-xs mb-1">// livello (read-only)</span>
+                <p class="field-readonly font-mono text-sm px-3 py-2 rounded">
+                    {{ user.profilo.get_livello_display }}
+                </p>
+            </div>
+            <div class="flex-1">
+                <span class="field-label-muted font-mono block text-xs mb-1">// punteggio (read-only)</span>
+                <p class="field-readonly field-readonly-score font-mono text-sm px-3 py-2 rounded">
+                    {{ user.profilo.punteggio }} pt
+                </p>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary font-mono w-full py-2.5 px-4 rounded text-sm font-bold">
+            $ ./salva_modifiche
+        </button>
+
+    </form>
+</div>
+{% endblock %}

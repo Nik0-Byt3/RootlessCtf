@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ sfida.titolo }} - RootlessCTF{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+    <!-- Prompt terminale -->
+    <div class="font-mono text-xs text-zinc-600 mb-3 flex items-center gap-2">
+        <span class="terminal-user">root@ctf</span>
+        <span class="terminal-separator">:</span>
+        <span class="terminal-dir">~</span>
+        <span class="terminal-separator">$</span>
+        <span class="text-zinc-500 ml-1">./apri_sfida --id {{ sfida.id }}</span>
+    </div>
+
+    <!-- Header sfida -->
+    <div class="mb-6">
+        <div class="font-mono flex items-center gap-3 mb-2">
+            <span class="badge-diff text-xs px-2 py-0.5
+                {% if sfida.difficolta == 'facile' %}diff-facile
+                {% elif sfida.difficolta == 'medio' %}diff-medio
+                {% elif sfida.difficolta == 'difficile' %}diff-difficile{% endif %}">
+                {{ sfida.difficolta }}
+            </span>
+            <span class="text-xs text-zinc-600">{{ sfida.categoria.nome }}</span>
+            <span class="text-xs text-zinc-700">·</span>
+            <span class="text-xs text-brand">{{ sfida.p_massimo }} pt</span>
+        </div>
+        <h1 class="font-mono text-2xl font-bold text-white">{{ sfida.titolo }}</h1>
+    </div>
+
+    <!-- Immagine sfida -->
+    {% if sfida.immagine %}
+    <div class="mb-6">
+        <img src="{{ sfida.immagine.url }}" alt="{{ sfida.titolo }}" class="w-full max-h-64 object-cover rounded-lg border border-zinc-900">
+    </div>
+    {% endif %}
+
+    <!-- Descrizione -->
+    <div class="challenge-description font-mono mb-6 p-5 rounded-lg text-sm text-zinc-500">
+        <span class="text-zinc-700">// scenario</span><br><br>
+        {{ sfida.descrizione }}
+    </div>
+
+    <!-- STATI SFIDA -->
+    {% if sfida_completata %}
+        <div class="flag-success font-mono flex items-center gap-3 px-5 py-4 rounded-lg text-sm">
+            <span>✔</span> <span>Sfida già completata!</span>
+        </div>
+
+    {% elif sfida_appena_completata %}
+        <div class="flag-success font-mono px-5 py-4 rounded-lg text-sm">
+            <p class="font-bold text-base mb-2">🎉 Sfida completata!</p>
+            <p class="text-zinc-400">Punti ottenuti: <span class="text-brand">+{{ partecipa_punteggio }}</span></p>
+        </div>
+
+    {% else %}
+
+        <!-- Bottone avvia -->
+        <div id="start-btn-wrapper">
+            <button onclick="startChallenge()" class="btn-primary font-mono w-full py-3 rounded-lg text-sm">
+                $ ./inizia_sfida
+            </button>
+        </div>
+
+        <!-- Corpo sfida -->
+        <div id="challenge-body" class="hidden">
+
+            {% if sfida.link %}
+            <div class="challenge-box mb-6 px-4 py-3 rounded-lg flex items-center justify-between">
+                <span class="font-mono text-xs text-zinc-600">// ambiente di sfida disponibile</span>
+                <a href="{{ sfida.link }}" target="_blank" class="btn-card-action font-mono text-xs px-3 py-1.5 rounded border">
+                    $ ./apri ↗
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="font-mono mb-6 text-xs text-zinc-600">
+                // trova la flag nel formato <code class="text-brand mx-1">KEY{...}</code>
+            </div>
+
+            <!-- Flags Loop -->
+            <div class="space-y-4">
+                {% for flag in flags %}
+                <div class="flag-container rounded-lg p-4">
+                    <p class="font-mono text-xs text-zinc-700 mb-3">-- flag #{{ forloop.counter }}</p>
+
+                    {% if flag.id in flags_corrette %}
+                        <div class="font-mono flex items-center gap-2 text-sm text-brand">
+                            <span>✔</span> <span>Flag consegnata correttamente.</span>
+                        </div>
+                    {% else %}
+                        <form method="POST" class="space-y-3">
+                            {% csrf_token %}
+                            <input type="hidden" name="azione" value="consegna_flag">
+                            <input type="hidden" name="flag_id" value="{{ flag.id }}">
+                            <input type="hidden" name="sblocca_indizio_id" value="" id="hint-unlock-{{ flag.id }}">
+
+                            <div class="flex gap-2">
+                                <input type="text" name="flag_input" placeholder="KEY{...}" class="flag-input flex-1 rounded px-3 py-2 text-sm font-mono outline-none placeholder-zinc-800">
+                                <button type="submit" class="btn-primary font-mono px-4 py-2 rounded text-xs"> $ invia </button>
+                            </div>
+
+                            {% if flag.indizio %}
+                            <button type="button" onclick="toggleHint('hint-{{ flag.id }}', {{ flag.id }})" class="btn-hint font-mono text-xs">
+                                💡 sblocca indizio <span class="text-zinc-800">(-5 pt)</span>
+                            </button>
+                            {% endif %}
+                        </form>
+
+                        {% if flag.id == flag_feedback_id %}
+                            <div class="font-mono mt-3 text-xs">
+                                {% if flag_ok %}<span class="text-brand">✔ Flag corretta!</span>
+                                {% else %}<span class="text-red-500">✘ Flag errata. Riprova.</span>{% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if flag.indizio %}
+                        <div id="hint-{{ flag.id }}" class="hint-box font-mono mt-3 px-3 py-2 rounded text-xs {% if flag.id not in indizi_sbloccati %}hidden{% endif %}">
+                            💡 {{ flag.indizio.testo }}
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+            // Gestione visibilità iniziale
+            {% if challenge_started or flag_feedback_id or indizio_sbloccato %}
+                document.getElementById('challenge-body').classList.remove('hidden');
+                document.getElementById('start-btn-wrapper').classList.add('hidden');
+            {% endif %}
+
+            function startChallenge() {
+                document.getElementById('challenge-body').classList.remove('hidden');
+                document.getElementById('start-btn-wrapper').classList.add('hidden');
+            }
+
+            function toggleHint(hintId, flagId) {
+                const box = document.getElementById(hintId);
+                if (box.classList.contains('hidden')) {
+                    if (confirm('Sbloccare questo indizio costerà 5 punti. Continuare?')) {
+                        document.getElementById('hint-unlock-' + flagId).value = flagId;
+                        document.getElementById('hint-unlock-' + flagId).form.submit();
+                    }
+                }
+            }
+        </script>
+    {% endif %}
+</div>
+{% endblock %}

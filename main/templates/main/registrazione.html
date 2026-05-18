@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrazione - RootlessCTF{% endblock %}
+
+{% block public_content %}
+
+<div class="auth-container py-12">
+    <div class="auth-card">
+
+        <!-- Prompt terminale -->
+        <div class="font-mono text-xs text-zinc-600 mb-6 flex items-center gap-2">
+            <span class="terminal-user">root@ctf</span>
+            <span class="terminal-separator">:</span>
+            <span class="terminal-dir">~</span>
+            <span class="terminal-separator">$</span>
+            <span class="text-zinc-500 ml-1">./registrati --new-user</span>
+        </div>
+
+        <!-- Titolo -->
+        <div class="mb-8">
+            <h1 class="auth-title font-mono text-2xl font-bold">Registrati</h1>
+            <p class="auth-subtitle font-mono text-xs mt-1">// crea il tuo account su RootlessCTF</p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="form-label font-mono block text-xs mb-1">
+                    — {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.errors %}
+                <p class="font-mono text-red-400 text-xs mt-1">✘ {{ field.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-primary font-mono w-full mt-2 py-2.5 px-4 rounded text-sm font-bold">
+                $ ./crea_account
+            </button>
+        </form>
+
+        <!-- Link login -->
+        <p class="auth-footer-link font-mono text-center text-xs mt-6">
+            // hai già un account?
+            <a href="{% url 'main:login' %}" class="ml-1">./accedi</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

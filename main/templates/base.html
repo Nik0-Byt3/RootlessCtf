@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="it" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RootlessCTF{% endblock %}</title>
+
+    {% load static %}
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'brand': '#00ff9d' },
+                    fontFamily: { 'mono': ['"JetBrains Mono"', 'monospace'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & Custom CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-zinc-950 text-zinc-300 font-mono h-full">
+
+    {% if user.is_authenticated %}
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar w-56 shrink-0 flex flex-col fixed h-full">
+            <div class="sidebar-header px-5 py-6">
+                <a href="{% url 'main:home' %}" class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase">
+                    <span class="text-brand">⌗</span>
+                    <span class="text-white">RootlessCTF</span>
+                </a>
+                <p class="text-xs mt-1 custom_text">// secure learning platform</p>
+            </div>
+
+            <nav class="flex-1 px-2 py-4">
+                <p class="nav-section-title font-mono text-xs px-3 mb-2">-- navigazione</p>
+                <ul class="space-y-0.5">
+                    <li>
+                        <a href="{% url 'main:dashboard' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_dashboard %}{% endblock %}">
+                            <span class="text-brand">◈</span> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'main:catalogo' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_catalogo %}{% endblock %}">
+                            <span class="text-brand">◉</span> Catalogo Sfide
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'main:profilo' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_profilo %}{% endblock %}">
+                            <span class="text-brand">◎</span> Area Utente
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'main:cambio_password' %}" class="nav-link flex items-center gap-3 px-3 py-2 rounded text-xs {% block nav_passsword %}{% endblock %}">
+                            <span class="text-brand">◎</span> Cambio Password
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer px-4 py-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-brand"></span>
+                    <span class="text-xs text-zinc-600 truncate">{{ user.username }}</span>
+                </div>
+                <a href="{% url 'main:logout' %}" class="btn-logout font-mono block text-center text-xs px-3 py-1.5 rounded">
+                    $ logout
+                </a>
+            </div>
+        </aside>
+
+        <main class="ml-56 flex-1 overflow-y-auto p-8">
+            <!-- Messaggi Django -->
+            {% if messages %}
+            <div class="mb-6 space-y-2">
+                {% for message in messages %}
+                <div class="font-mono px-4 py-3 rounded text-xs msg-base
+                    {% if message.tags == 'error' %}msg-error{% elif message.tags == 'success' %}msg-success{% endif %}">
+                    {% if message.tags == 'error' %}✘{% elif message.tags == 'success' %}✔{% endif %}
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    {% else %}
+    <!-- LAYOUT PUBBLICO -->
+    <div class="min-h-screen flex flex-col">
+        <nav class="px-8 py-4 flex items-center justify-between border-b border-zinc-900">
+            <a href="{% url 'main:home' %}" class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase">
+                <span class="text-brand">⌗</span>
+                <span class="text-white">RootlessCTF</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="{% url 'main:login' %}" class="font-mono text-xs text-zinc-600 hover:text-white transition-colors">
+                    $ ./login
+                </a>
+                <a href="{% url 'main:registrazione' %}" class="btn-register font-mono text-xs px-4 py-2 rounded">
+                    $ ./registrati
+                </a>
+            </div>
+        </nav>
+        <main class="flex-1">
+            {% block public_content %}{% endblock %}
+        </main>
+    </div>
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

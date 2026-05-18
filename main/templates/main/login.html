@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - RootlessCTF{% endblock %}
+
+{% block public_content %}
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <!-- Prompt terminale -->
+        <div class="font-mono text-xs text-zinc-600 mb-6 flex items-center gap-2">
+            <span class="terminal-user">root@ctf</span>
+            <span class="terminal-separator">:</span>
+            <span class="terminal-dir">~</span>
+            <span class="terminal-separator">$</span>
+            <span class="text-zinc-500 ml-1">./login --user</span>
+        </div>
+
+        <!-- Titolo -->
+        <div class="mb-8">
+            <h1 class="auth-title font-mono text-2xl font-bold">Accedi</h1>
+            <p class="auth-subtitle font-mono text-xs mt-1">// bentornato su RootlessCTF</p>
+        </div>
+
+        <!-- Errore (usa le classi msg-error che abbiamo in shopnova.css) -->
+        {% if errore %}
+        <div class="msg-base msg-error font-mono mb-4 px-4 py-3 rounded text-xs">
+            ✘ {{ errore }}
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="form-label font-mono block text-xs mb-1">
+                    — {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="font-mono text-red-400 text-xs mt-1">✘ {{ field.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-primary font-mono w-full mt-2 py-2.5 px-4 rounded text-sm font-bold">
+                $ ./accedi
+            </button>
+        </form>
+
+        <!-- Link registrazione -->
+        <p class="auth-footer-link font-mono text-center text-xs mt-6">
+            // non hai un account?
+            <a href="{% url 'main:registrazione' %}" class="ml-1">./registrati</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

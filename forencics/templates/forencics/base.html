@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <link rel="stylesheet" href="{% static '/forencics/css/style.css' %}">
+</head>
+<body>
+    <div class="app-container">
+        <header class="top-bar">
+            <div>
+                <i class="fas fa-shield-alt"></i> A.I.I.I. TERMINAL v4.2.1-STABLE
+            </div>
+            <div>
+                SESSION_ID: <span style="color: var(--ui-accent)">{{ request.session.session_key|slice:":8" }}</span> |
+                ENCRYPTION: AES-256-GCM |
+                LOGGED_AS: {{ user.username|upper }}
+            </div>
+        </header>
+
+        <aside class="sidebar">
+            <span class="sidebar-title">NAVIGAZIONE RISORSE</span>
+            <div class="tree-item"><i class="fas fa-database"></i> DB_CASI_CORRENTI</div>
+            <div class="tree-item active" style="margin-left: 15px; color: var(--ui-accent);">
+                └─ <i class="fas fa-file-invoice"></i> CASO_#{{ challenge_id }}
+            </div>
+            <div class="tree-item" style="margin-top: 20px;"><i class="fas fa-history"></i> LOG_ACCESSI</div>
+            <div class="tree-item"><i class="fas fa-tools"></i> TOOLBOX_FORENSICS</div>
+        </aside>
+
+        <main class="case-container">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="top-bar" style="border-top: 1px solid var(--ui-border); border-bottom: none;">
+            <div>SISTEMA_OPERATIVO_CENTRALIZZATO_AIII</div>
+            <div id="clock"></div>
+        </footer>
+    </div>
+
+    <script>
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toISOString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

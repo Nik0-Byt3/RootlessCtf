@@ -1,0 +1,36 @@
+{% extends 'forencics/base.html' %}
+
+
+{% block content %}
+<div class="terminal-container">
+
+    <div class="terminal-header">
+        <h2># SFIDA_11: {{ sfida.titolo|upper }}</h2>
+        <p class="terminal-status">STATUS: INTERCETTAZIONE ATTIVA | CATEGORIA: {{ sfida.settore }}</p>
+    </div>
+
+    <div class="briefing-section">
+        <h3 class="briefing-title">[ MISSION_BRIEFING ]</h3>
+        <p>{{ sfida.descrizione|linebreaksbr }}</p>
+    </div>
+
+    <div class="evidence-box">
+        <p>REPERTO BINARIO INDIVIDUATO:</p>
+        {% for file_obj in sfida.filesfida_set.all %}
+            <a href="{{ file_obj.file.url }}" download class="btn-download">
+                <i class="fas fa-network-wired"></i> SCARICA DUMP DI RETE (.PCAP)
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="console-tips">
+        <p>// ANALISI_NETWORK_ADVICE:</p>
+        <ul>
+            <li>> Filtra i dati per protocollo applicativo (HTTP).</li>
+            <li>> Ispeziona i flussi TCP diretti al nodo target (192.168.1.45).</li>
+            <li>> Cerca stringhe di autenticazione nei parametri POST.</li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Catalogo Sfide - RootlessCTF{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    <!-- Prompt terminale -->
+    <div class="font-mono text-xs text-zinc-600 mb-3 flex items-center gap-2">
+        <span class="terminal-user">root@ctf</span>
+        <span class="terminal-separator">:</span>
+        <span class="terminal-dir">~</span>
+        <span class="terminal-separator">$</span>
+        <span class="text-zinc-500 ml-1">./catalogo --list</span>
+    </div>
+    <h1 class="font-mono text-xl font-bold text-white mb-6">Catalogo Sfide</h1>
+
+    <!-- Filtri -->
+    <form method="GET" class="flex flex-wrap gap-3 mb-8">
+        <select name="categoria" class="font-mono bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs rounded px-3 py-2 outline-none cursor-pointer">
+            <option value="">-- categoria</option>
+            {% for cat in categorie %}
+                <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}selected{% endif %}>
+                    {{ cat.nome }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <select name="difficolta" class="font-mono bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs rounded px-3 py-2 outline-none cursor-pointer">
+            <option value="">-- difficoltà</option>
+            <option value="facile"    {% if request.GET.difficolta == 'facile'    %}selected{% endif %}>facile</option>
+            <option value="medio"     {% if request.GET.difficolta == 'medio'     %}selected{% endif %}>medio</option>
+            <option value="difficile" {% if request.GET.difficolta == 'difficile' %}selected{% endif %}>difficile</option>
+        </select>
+
+        <select name="stato" class="font-mono bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs rounded px-3 py-2 outline-none cursor-pointer">
+            <option value="">-- stato</option>
+            <option value="non_iniziata" {% if request.GET.stato == 'non_iniziata' %}selected{% endif %}>non_iniziata</option>
+            <option value="incompleta"   {% if request.GET.stato == 'incompleta'   %}selected{% endif %}>incompleta</option>
+            <option value="completata"   {% if request.GET.stato == 'completata'   %}selected{% endif %}>completata</option>
+        </select>
+
+        <button type="submit" class="btn-primary font-mono px-4 py-2 text-xs rounded">
+            $ filtra
+        </button>
+
+        <a href="{% url 'main:catalogo' %}" class="btn-reset font-mono px-4 py-2 text-xs rounded">
+            $ reset
+        </a>
+    </form>
+
+    <!-- Griglia sfide -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for sfida in sfide %}
+        <div class="sfida-card group rounded-lg overflow-hidden">
+            <!-- Immagine -->
+            {% if sfida.immagine %}
+                <img src="{{ sfida.immagine.url }}" alt="{{ sfida.titolo }}" class="w-full h-32 object-cover">
+            {% else %}
+                <div class="sfida-img-placeholder w-full h-32 flex items-center justify-center font-mono text-xs text-zinc-700">
+                    <span>
+                        {% if sfida.categoria.nome == 'Web' %}🌐
+                        {% elif sfida.categoria.nome == 'Cryptography' %}🔐
+                        {% elif sfida.categoria.nome == 'Forensics' %}🔍
+                        {% else %}◎
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+
+            <div class="p-4">
+                <!-- Titolo + badge stato -->
+                <div class="flex items-start justify-between gap-2 mb-2">
+                    <h2 class="font-mono text-sm font-bold text-white leading-tight">{{ sfida.titolo }}</h2>
+                    <span class="badge-status font-mono shrink-0
+                        {% if sfida.stato_utente == 'completata' %}badge-done
+                        {% elif sfida.stato_utente == 'incompleta' %}badge-pending
+                        {% else %}badge-empty{% endif %}">
+                        {% if sfida.stato_utente == 'completata' %}✔{% elif sfida.stato_utente == 'incompleta' %}◐{% else %}○{% endif %}
+                        {{ sfida.stato_utente|default:"non iniziata" }}
+                    </span>
+                </div>
+
+                <!-- Meta info -->
+                <div class="font-mono flex items-center gap-2 mb-4 text-xs text-zinc-600">
+                    <span>{{ sfida.categoria.nome }}</span>
+                    <span class="text-zinc-800">·</span>
+                    <span class="{% if sfida.difficolta == 'facile' %}text-green-500{% elif sfida.difficolta == 'medio' %}text-yellow-500{% elif sfida.difficolta == 'difficile' %}text-red-500{% endif %}">
+                        {{ sfida.difficolta }}
+                    </span>
+                    <span class="text-zinc-800">·</span>
+                    <span class="text-brand">{{ sfida.p_massimo }}pt</span>
+                </div>
+
+                <!-- CTA -->
+                <a href="{% url 'main:sfida_detail' sfida.id %}" class="btn-card-action font-mono block text-center text-xs py-2 rounded">
+                    $ {% if sfida.stato_utente == 'incompleta' %}./riprendi{% elif sfida.stato_utente == 'completata' %}./rivedi{% else %}./inizia{% endif %}
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-3 py-16 text-center font-mono text-xs text-zinc-700">
+            <p class="mb-2">$ ls ./sfide/ --filter</p>
+            <p class="text-brand">// nessuna sfida trovata.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "forencics/base.html" %}
+
+{% block content %}
+<div class="case-header">
+    <div class="title-section">
+        <h2 style="margin:0; color: var(--ui-accent);">ORDINE DI ANALISI: {{ challenge_name|upper }}</h2>
+        <small style="color: var(--text-dim);">PROTOCOLLO: AIII-OFFICE-{{ challenge_id }} | PRIORITÀ: MEDIA</small>
+    </div>
+    <div class="status-indicator" style="text-align: right;">
+        <span style="border: 1px solid var(--ui-border); padding: 5px 10px; font-size: 11px;">
+            <i class="fas fa-microscope"></i> ANALISI IN CORSO
+        </span>
+    </div>
+</div>
+
+<div class="analysis-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 20px; margin-top: 20px;">
+
+    <div class="doc-panel" style="background: var(--bg-card); border: 1px solid var(--ui-border); padding: 20px;">
+        <h3 style="border-bottom: 1px solid var(--ui-border); padding-bottom: 10px; font-size: 14px;">
+            <i class="fas fa-file-alt"></i> RAPPORTO PRELIMINARE
+        </h3>
+        <p style="line-height: 1.6; color: var(--text-primary);">
+            In data odierna, il reparto di Cyber-Intelligence ha intercettato uno scambio di file tra due utenze
+            monitorate.
+            Il file <strong>photo.jpg</strong> è stato isolato come potenziale vettore di informazioni.
+            Controlli standard sulla struttura dei pixel non hanno evidenziato anomalie, suggerendo l'uso dell'header
+            tecnico per l'occultamento dei dati.
+        </p>
+
+        <div class="technical-specs" style="margin-top: 30px;">
+            <table class="table-forensics" style="width: 100%; font-size: 11px;">
+                <tr style="background: #24292e;">
+                    <th colspan="2" style="padding: 10px;">SPECIFICHE TECNICHE REPERTO</th>
+                </tr>
+                <tr>
+                    <td style="color: var(--text-dim);">ID REPERTO</td>
+                    <td>{{ evidence_id }}</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text-dim);">INTEGRITÀ (MD5)</td>
+                    <td><code>{{ md5_hash }}</code></td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text-dim);">FORMATO</td>
+                    <td>Joint Photographic Experts Group (JPEG)</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text-dim);">ISTRUZIONI</td>
+                    <td>Estrarre attributi 'Non-Pixel' per individuare la firma.</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="download-container" style="...">
+            <p style="margin-bottom: 15px; font-size: 12px;">RICHIESTA ACCESSO AI DATI BINARI</p>
+
+            {% for file_obj in sfida.filesfida_set.all %}
+            <a download href="{{ file_obj.file.url }}"
+               style="background: var(--ui-accent); color: white; padding: 10px 25px; text-decoration: none; font-weight: bold; border-radius: 2px;">
+                <i class="fas fa-download"></i> DOWNLOAD_{{ file_obj.nome|upper }}
+            </a>
+            {% empty %}
+            <p style="color: var(--text-dim);">Nessun reperto disponibile per questa analisi.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="action-panel" style="background: #000; border: 1px solid var(--ui-border); padding: 20px;">
+        <h3 style="color: var(--ui-accent); font-size: 14px; margin-top: 0;">TERMINALE DI STATO</h3>
+        <hr style="border: 0; border-top: 1px solid var(--ui-border); margin: 15px 0;">
+
+        <div style="background: rgba(255, 165, 0, 0.1); border: 1px solid #d4a017; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+            <p style="color: #d4a017; font-size: 11px; margin: 0;">
+                <i class="fas fa-info-circle"></i> <strong>SISTEMA DI CONSEGNA:</strong><br>
+                L'acquisizione delle risultanze deve essere effettuata tramite il terminale della Dashboard centrale del
+                Main.
+            </p>
+        </div>
+
+        <p style="font-size: 12px; color: var(--text-dim); line-height: 1.4;">
+            Dopo aver estratto la <strong>Flag</strong> dal reperto tramite analisi forense, segui la procedura:
+        </p>
+
+        <ul style="font-size: 11px; color: var(--text-dim); padding-left: 20px;">
+            <li>Copia la stringa identificata</li>
+            <li>Torna al portale operativo</li>
+            <li>Incolla il codice nel campo "Flag" della sfida #{{ challenge_id }}</li>
+        </ul>
+
+
+        <div class="security-notice" style="margin-top: 40px; font-size: 10px; color: var(--text-dim);">
+            <p><i class="fas fa-exclamation-triangle"></i> NOTA DI SICUREZZA:</p>
+            <p>L'accesso a questo fascicolo è registrato. Ogni attività non autorizzata sarà notificata al CID (Cyber
+                Investigation Department).</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

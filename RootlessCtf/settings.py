@@ -37,6 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'main.apps.MainConfig',
+    'sqli',
+    'cookie',
+    'visitor',
+    'ssrf',
+    'cryptography',
+    'forencics',
 ]
 
 MIDDLEWARE = [
@@ -73,9 +80,13 @@ WSGI_APPLICATION = 'RootlessCtf.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+'default': {  # usato dall app main del progetto
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ctf',
+        'USER': 'postgres',
+        'PASSWORD': '01001110',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -98,6 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -115,3 +127,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+LOGIN_URL = '/login/'
+

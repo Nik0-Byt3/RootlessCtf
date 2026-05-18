@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - RootlessCTF{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<div class="dashboard">
+
+  <div class="prompt">
+    <span class="prompt-green">root@ctf</span>
+    <span class="prompt-dim">:</span>
+    <span class="prompt-blue">~</span>
+    <span class="prompt-dim">$</span>
+    <span style="color:#52525b; margin-left:0.25rem;">./whoami --verbose</span>
+  </div>
+
+  <div class="card">
+    <div class="profile-header">
+      {% if utente.profilo.foto_profilo %}
+        <img src="{{ utente.profilo.foto_profilo.url }}" alt="avatar" class="avatar-img">
+      {% else %}
+        <div class="avatar-placeholder">{{ utente.username|first|upper }}</div>
+      {% endif %}
+
+      <div class="profile-info">
+        <h1 class="username">{{ utente.username }}</h1>
+        <p class="email">{{ utente.email }}</p>
+        <div class="badge-row">
+          <span class="badge
+            {% if utente.profilo.livello == 'principiante' %}badge-principiante
+            {% elif utente.profilo.livello == 'intermedio' %}badge-intermedio
+            {% elif utente.profilo.livello == 'esperto' %}badge-esperto
+            {% endif %}">
+            {{ utente.profilo.get_livello_display }} </span>
+
+          <span class="score">
+            <span class="score-value">{{ utente.profilo.punteggio }}</span>
+            <span style="color:#3f3f46;"> / </span>
+            {{ punteggio_max_totale }} pt
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="progress-labels">
+        <span>Principiante</span><span>Intermedio</span><span>Esperto</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" style="width: {{ percentuale }}%;"></div>
+        <div class="progress-divider" style="left: 33.33%;"></div>
+        <div class="progress-divider" style="left: 66.66%;"></div>
+      </div>
+      <div class="progress-values">
+        <span>0</span><span>{{ soglia_intermedia }}</span><span>{{ punteggio_max_totale }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="prompt">
+      <span class="prompt-green">$</span>
+      <span>./sfide --stato incompleta</span>
+      {% if sfide_in_sospeso %}<span style="color:#3f3f46;">({{ sfide_in_sospeso|length }} risultati)</span>{% endif %}
+    </div>
+    {% if sfide_in_sospeso %}
+    <div class="sfida-list">
+      {% for partecipa in sfide_in_sospeso %}
+      <div class="sfida-item">
+        <div class="sfida-left">
+          <span class="sfida-icon sfida-icon-pending">◐</span>
+          <div class="sfida-info">
+            <p class="sfida-title">{{ partecipa.sfida.titolo }}</p>
+            <p class="sfida-meta">
+              {{ partecipa.sfida.categoria.nome }} ·
+              <span class="{% if partecipa.sfida.difficolta == 'facile' %}diff-facile{% elif partecipa.sfida.difficolta == 'medio' %}diff-medio{% elif partecipa.sfida.difficolta == 'difficile' %}diff-difficile{% endif %}">
+                {{ partecipa.sfida.difficolta }}
+              </span>
+            </p>
+          </div>
+        </div>
+        <a href="{% url 'main:sfida_detail' partecipa.sfida.id %}" class="btn-riprendi">$ ./riprendi</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">// nessuna sfida in sospeso.</p>
+    {% endif %}
+  </div>
+
+  <div class="section">
+    <div class="prompt">
+      <span class="prompt-green">$</span>
+      <span>./sfide --stato completata</span>
+      {% if sfide_completate %}<span style="color:#3f3f46;">({{ sfide_completate|length }} risultati)</span>{% endif %}
+    </div>
+    {% if sfide_completate %}
+    <div class="sfida-list">
+      {% for partecipa in sfide_completate %}
+      <div class="sfida-item">
+        <div class="sfida-left">
+          <span class="sfida-icon sfida-icon-done">✔</span>
+          <div class="sfida-info">
+            <p class="sfida-title">{{ partecipa.sfida.titolo }}</p>
+            <p class="sfida-meta">
+              {{ partecipa.sfida.categoria.nome }} ·
+              <span class="{% if partecipa.sfida.difficolta == 'facile' %}diff-facile{% elif partecipa.sfida.difficolta == 'medio' %}diff-medio{% elif partecipa.sfida.difficolta == 'difficile' %}diff-difficile{% endif %}">
+                {{ partecipa.sfida.difficolta }}
+              </span>
+            </p>
+          </div>
+        </div>
+        <span class="score-badge">+{{ partecipa.punteggio_ottenuto }} pt</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">// nessuna sfida completata ancora.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}
