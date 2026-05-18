@@ -200,7 +200,7 @@ def profilo(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Profilo aggiornato con successo.')
-            return redirect('profilo')
+            return redirect('main:profilo')
     else:
         form = ProfiloForm(instance=request.user.profilo)
 
